@@ -1,5 +1,8 @@
 package msg;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import sync.controller.ServerController;
 
 public class MessageClient implements MsgConstants {
@@ -16,7 +19,7 @@ public class MessageClient implements MsgConstants {
 			messenger.setName("MsgClientTread");
 			
 			long msgTime = System.currentTimeMillis();
-			System.out.println("Message sent to server at time" + msgTime + "ms");
+			System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + " Message sent to server");
 			
 			// set message request id and query so that the server will be able
 			// to get the data that was requested
@@ -25,7 +28,7 @@ public class MessageClient implements MsgConstants {
 			msg = messenger.sendReqest(msg, IP, port);
 
 			msgTime = System.currentTimeMillis() - msgTime;
-			System.out.println("Message Receivedo from server at time" + msgTime + "ms");
+			System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + " Message Received from server" );
 			System.out.println(msg.messageObj.dbBundle.rowData);
 			//}	for
 		// messenger.start();

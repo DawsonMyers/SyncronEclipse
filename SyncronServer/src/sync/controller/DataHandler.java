@@ -22,25 +22,50 @@ public class DataHandler {
 	// ////////////////////////////////////////////////////////////////
 
 	public synchronized NodeMsgData getNodeData() {
-		return controller.nodeData.getNodeMsgData();
+		NodeMsgData msgData;
+		try {
+			msgData = controller.nodeData.getNodeMsgData();
+		} catch (Exception e) {
+			e.printStackTrace();
+			msgData = new NodeMsgData();
+		}
+		return msgData;
+				
 	}
 
 	public synchronized void getNodeData(NodeMsgData nodeMsgData) {
-		controller.nodeData.setNodeMsgData(nodeMsgData);
+		try {
+			controller.nodeData.setNodeMsgData(nodeMsgData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[DataHandler::setNodeMsgData] >> ERROR SETTING NodeMsgData");
+		}
 	}
 
 	public synchronized void setNodeData(NodeMsgData nodeMsgData) {
-		controller.nodeData.setNodeMsgData(nodeMsgData);
+		try {
+			controller.nodeData.setNodeMsgData(nodeMsgData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[DataHandler::setNodeMsgData] >> ERROR GETTING NodeMsgData");
+		}
 	}
 
 	// Database data access
 	// ////////////////////////////////////////////////////////////////
 
 	public synchronized DbBundle getFromDatabase(DbBundle dbBundle) {
-		dbBundle = new SqlMachine(dbBundle).getSql();
+		try {
+			dbBundle = new SqlMachine(dbBundle).getSql();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[DataHandler::getFromDatabase] >> ERROR GETTING DATA FROM DATABASE");
+		}
 		return dbBundle;
 	}
 
-
+	public synchronized int[] getAnalogArray() {
+		return  controller.nodeData.getAnalogVals();
+	}
 
 }

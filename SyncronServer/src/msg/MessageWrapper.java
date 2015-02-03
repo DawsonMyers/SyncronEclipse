@@ -9,35 +9,35 @@ public class MessageWrapper implements Serializable, MsgConstants {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 4680391683892841426L;
+	private static final long	serialVersionUID	= 1L;
 	public int					mMsgId, mObjectId, mUserId, mActionId, mStatus;
-public int      mRequestId;
-public String[] mStringsArgs;
-public int[]    mIntArgs;
-public String   mIntent;
-public MessageObject messageObj = new MessageObject();
+	public int					mRequestId;
+	public String[]				mStringsArgs;
+	public int[]				mIntArgs;
+	public String				mIntent;
+	public MessageObject		messageObj			= new MessageObject();
 
-public Long mTime;
+	public Long					mTime;
 
-public Object mMsgObject;
-private String mQuery;
+	public Object				mMsgObject;
+	private String				mQuery;
 
-// main
-// ///////////////////////////////////////////////////////////////////////////////////
-public MessageWrapper() {
-	mRequestId = STREAM;
-}
-
-public MessageWrapper(Object msgObject) {
-	mMsgObject = msgObject;
-}
-
-public MessageWrapper(int requestId, int actionId) {
-	mRequestId = requestId;
-	mActionId = actionId;
+	// main
+	// ///////////////////////////////////////////////////////////////////////////////////
+	public MessageWrapper() {
+		mRequestId = STREAM;
 	}
 
-public 	MessageWrapper(Object msgObject, int actionId) {
+	public MessageWrapper(Object msgObject) {
+		mMsgObject = msgObject;
+	}
+
+	public MessageWrapper(int requestId, int actionId) {
+		mRequestId = requestId;
+		mActionId = actionId;
+	}
+
+	public MessageWrapper(Object msgObject, int actionId) {
 		mMsgObject = msgObject;
 		mActionId = actionId;
 	}
@@ -58,8 +58,13 @@ public 	MessageWrapper(Object msgObject, int actionId) {
 		messageObj.setRequestSql(query);
 	}
 
-public String getQuery() {
-	mQuery = messageObj.dbBundle.sqlQuery;
-	return mQuery;
-}
+	public String getQuery() {
+		mQuery = messageObj.dbBundle.sqlQuery;
+		return mQuery;
+	}
+
+	public synchronized String getAnalogString() {
+		return messageObj.getAnalogString();
+	}
+
 }

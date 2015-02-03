@@ -3,6 +3,8 @@ package sync.main;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -23,40 +25,45 @@ public class RunClient {
 	public static boolean		isReady	= false;
 	static SerialPort		serialPort	= new SerialPort("COM4");
 
-	public static void main(String[] args) throws SerialPortException {
+	public static void main(String[] args)   {
 
 		StartClientServer();
 
 	}
 
-	synchronized static void StartClientServer() throws SerialPortException {
+	synchronized static void StartClientServer()   {
 
 		serialThread = new SerialThread();
 		serialThread.start();
-		try {
-			waitForClientServerQuit();
-		} catch (InterruptedException | IOException e) {
-			// TODO
-			e.printStackTrace();
-		}
+		waitForClientServerQuit();
 
 
 	}
 
-	synchronized static void waitForClientServerQuit() throws InterruptedException, UnknownHostException, IOException, SerialPortException {
+	synchronized static void waitForClientServerQuit() {//throws InterruptedException, UnknownHostException, IOException, SerialPortException {
 
-		socket = null; //new Socket(serverIP, serverPort);
-		clientThread = new SocketClientThread(socket);
-		clientThread.start();
+		try {
+			socket = null; //new Socket(serverIP, serverPort);
+			clientThread = new SocketClientThread(socket);
+			clientThread.start();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			System.out.println("[ERROR - " + (new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + "] -> [RunClient::waitForClientServerQuit]TYPE = Exception | VAR = e1");
+		}
 		
 
 		//while(true) readVals();
 
 
 
-		synchronized (clientThread) {
-			Thread.sleep(100);
-			clientThread.wait();
+		try {
+			synchronized (clientThread) {
+				Thread.sleep(100);
+				clientThread.wait();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.out.println("[ERROR - " + (new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + "] -> [RunClient::waitForClientServerQuit]TYPE = Exception | VAR = e");
 		}
 
 

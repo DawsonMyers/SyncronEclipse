@@ -17,12 +17,24 @@ public  class MsgResponseHandler implements MsgConstants {
 	//	main
 	// ///////////////////////////////////////////////////////////////////////////////////
 	public MsgResponseHandler(MessageWrapper msg){
+		
 		switch (msg.getRequestId()) {
 			case STREAM:
-				msg.messageObj.nodeData = controller.dataHandler.getNodeData();
+				try {
+					msg.messageObj.nodeData = controller.dataHandler.getNodeData();
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("[MsgResponseHandler] >> ERROR GETTING NODE DATA");
+				}
+				
 				break;
 			case SQL:
-				msg.messageObj.dbBundle = controller.dataHandler.getFromDatabase(msg.messageObj.dbBundle);
+				try {
+					msg.messageObj.dbBundle = controller.dataHandler.getFromDatabase(msg.messageObj.dbBundle);
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("[MsgResponseHandler] >> ERROR GETTING DATA FROM DATABASE");
+				}
 				break;
 			case TEST:
 				System.out.println("Test message responder");

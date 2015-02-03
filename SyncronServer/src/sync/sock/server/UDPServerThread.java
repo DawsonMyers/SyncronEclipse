@@ -10,10 +10,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import msg.NodeMsgData;
+import simplemysql.SocketMySql;
 import sync.controller.NodeData;
 import sync.controller.ServerController;
 import jssc.SerialPortException;
@@ -23,6 +25,7 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	// [General]
 	// to display time
 	private SimpleDateFormat		sdf;
+	private long					lastReceivedTime;
 
 	// [UDP] Socket
 	public static Thread			udpThread			= null;
@@ -34,6 +37,8 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	// "0123456789".getBytes();
 	public static boolean[]			digiInput			= new boolean[10];
 	public static boolean[]			digiOutput			= new boolean[10];
+	public static volatile boolean	newDataAvail		= false;
+	public static volatile boolean	isRunning			= false;
 
 	public static int				UdpOutBufferLength	= 50;
 	public static byte[]			UdpOutBuffer		= new byte[UdpOutBufferLength];
@@ -51,14 +56,16 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	public static String			IP					= syncronIP;
 	// UDP Processing
 	public static int[]				analogVals			= null;
+	public static int				databaseDelay		= 5 * 60* 1000; // minutes
+	public static Thread			dbInjectorThread	= null;
 
 	// ////////////////////////////////////////////////////////////////////////////////////////////////////
 	// [UDP]
-	//
+	//(new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date())
 
 	UDPServerThread() {
 		super("UDPServerThread");
-
+		startDatabaseInjection();
 		sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			initServerUDP();
@@ -68,12 +75,56 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	}
 
 
-	UDPServerThread(byte[] buffer) {
+	/**
+	 * 
+	 */
+	private void startDatabaseInjection() {
+
+		dbInjectorThread = new Thread("DbInjector") {
+
+			public void run() {
+				try {
+					while (true) {
+						Thread.sleep(databaseDelay);
+						SocketMySql sql = new SocketMySql();
+						int[] vals = controller.dataHandler.getAnalogArray();
+						// "INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ('Analog_0',400)";
+						// String quFrag = "I"
+						String query = "INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ";
+						if (newDataAvail) {
+							String end = ";";
+							for (int i = 0; i < vals.length; i++) {
+								end = i == (vals.length - 1) ? ";" : ", ";
+								query += String.format("('Analog_%s',%s)%s", i, vals[i],end);
+//								query += String.format("INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ('Analog_%s',%s)%s", i, vals[i],end);
+							}
+							System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + "data insert into Db");
+							//System.out.println(query);
+							sql.insertQuery(query);
+						}
+						newDataAvail=false;
+
+						
+						
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date())
+										+ "  -> [UDPServerThread.startDatabaseInjection().new Thread() {...}::run]");
+
+				}
+			}
+		};
+		dbInjectorThread.start();
+	}
+
+	public UDPServerThread(byte[] buffer) {
 		this();
 		UdpBuffer = buffer;
 	}
 
 	public synchronized void run() {
+		System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + " UDP Thread started");
 		while (true) {
 			try {
 				receiveUDP(UdpBuffer);
@@ -117,21 +168,39 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 				break;
 			}
 		}
-		
-//		ServerThread.setAnalogVals(dataInt);
-//		ServerThread.setAnalogString(temp);
+
+		// ServerThread.setAnalogVals(dataInt);
+		// ServerThread.setAnalogString(temp);
 		String date = sdf.format(new Date());
 		// System.out.println("[" + date + "] " + "Received data string: " +
 		// temp);
 		// System.out.println("processed data: " +
 		// SyncronNetwork.toString(ServerThread.getDigitalOutput()));
 		// System.out.println("Processing Complete");
-		
-		//	Send data to controller
+
+		// Send data to controller
 		nodeMsgData.analogVals = dataInt.clone();
+		nodeMsgData.analogString = temp;
 		temp = null;
+
+		setLastReceivedTime();
+		newDataAvail = true;
 		controller.dataHandler.setNodeData(nodeMsgData);
 	}
+
+	/**
+	 * 
+	 */
+	private void setLastReceivedTime() {
+		lastReceivedTime = System.currentTimeMillis();
+	}
+
+	private boolean newDataCheck() {
+		return (System.currentTimeMillis() - lastReceivedTime) > 1000;
+
+
+	}
+
 
 	/*
 	 * public synchronized static void StartUdpThread() throws SocketException,

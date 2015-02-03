@@ -3,6 +3,9 @@ package msg;
 import java.net.Socket;
 
 import socketmsg.ObjectMessengerBase;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 
 public class ObjectMessengerThread extends ObjectMessengerBase implements MsgConstants{
@@ -45,7 +48,7 @@ public class ObjectMessengerThread extends ObjectMessengerBase implements MsgCon
 		synchronized (objLock) {
 			try {
 				// this.sleep(20);
-				objLock.wait();
+				objLock.wait(10000);
 				os.close();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -66,35 +69,41 @@ public class ObjectMessengerThread extends ObjectMessengerBase implements MsgCon
 	// ///////////////////////////////////////////////////////////////////////////////////
 	// either send-receive (client) or receive-send (server)
 	public synchronized void run() {
-		if (socket == null) {
-			//	client request
-			
-			os.connectClient(ip, serverPort);
-			//MessageWrapper msg = new MessageWrapper();
-			//msg.mStatus = 0;
-			timer.start();
-			sendMessage(this.msg);
-			msg = readMessage();
-			timer.finish(msgTime);
-			timer.print();
-			System.out.println("Message #" + msg.mStatus);
-		} else {
-			//	server response
-			os.connectServer(socket);
-			msg = os.readMessage();
-			if(msg.getQuery().length() < 5) msg.setRequestId(STREAM); 
-			MsgResponseHandler msgHandler = new MsgResponseHandler(msg);
-			msg.mStatus = MessageServer.getCount();
-			sendMessage(msg);
+		try {
+			if (socket == null) {
+				//	client request
+				
+				os.connectClient(ip, serverPort);
+				//MessageWrapper msg = new MessageWrapper();
+				//msg.mStatus = 0;
+				timer.start();
+				sendMessage(this.msg);
+				msg = readMessage();
+				timer.finish(msgTime);
+				timer.print();
+				System.out.println("Message #" + msg.mStatus);
+			} else {
+				//	server response
+				os.connectServer(socket);
+				msg = os.readMessage();
+				if(msg.getQuery().length() < 5) msg.setRequestId(STREAM); 
+				MsgResponseHandler msgHandler = new MsgResponseHandler(msg);
+				msg.mStatus = MessageServerThread.getCount();
+				System.out.println("Message #" + msg.mStatus);
+				sendMessage(msg);
 
-		}
-		// notifies waiting threads
-		os.close();
-		synchronized (this) {
-			this.notify();
-		}
-		synchronized (objLock) {
-			objLock.notifyAll();
+			}
+			// notifies waiting threads
+			os.close();
+			synchronized (this) {
+				this.notify();
+			}
+			synchronized (objLock) {
+				objLock.notifyAll();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[ERROR - " + (new SimpleDateFormat("HH:mm:ss")).format(new Date()) + "] -> [ObjectMessengerThread::run]TYPE = Exception | VAR = e");
 		}
 	}
 

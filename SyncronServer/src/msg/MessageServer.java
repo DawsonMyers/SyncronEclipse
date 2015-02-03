@@ -17,7 +17,7 @@ public class MessageServer {
 	public static ServerSocket serverSock;
 	public static Socket socket;
 	public static MessageWrapper msg;
-	public static int count = 100;
+	public static int count =  0;
 
 	// Start server
 	// ///////////////////////////////////////////////////////////////////////////////////
