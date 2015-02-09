@@ -13,8 +13,20 @@ import msg.SqlMachine;
  */
 public class DataHandler {
 	ServerController	controller	= ServerController.getInstance();
-
-
+	static DataHandler dataHandler = new DataHandler();
+	
+	public static DataHandler getInstance() {
+		  if(dataHandler == null) {
+		     synchronized(DataHandler.class) {
+		       if(dataHandler == null) {
+		    	   dataHandler = new DataHandler();
+		       }
+		    }
+		  }
+		  return dataHandler;
+		}
+ 
+	
 	// controller data interface
 	// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +78,9 @@ public class DataHandler {
 
 	public synchronized int[] getAnalogArray() {
 		return  controller.nodeData.getAnalogVals();
+	}
+	public synchronized void setAnalogValue(int index, int value) {
+		   controller.nodeData.setAnalogValue(index, value);
 	}
 
 }

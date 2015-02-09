@@ -12,8 +12,10 @@ import msg.NodeMsgData;
  */
 public class NodeData implements Serializable {
 
+	
+	public static int ANALOG_PINS = 12;
 // Analog input values
-public static int[]     analogVals   = null;
+public static int[]     analogVals    = new int[ANALOG_PINS];
 public static String analogString = "";
 // Digital inputs/outputs
 public static boolean[] digitalInput = null;
@@ -28,6 +30,12 @@ public static  NodeMsgData nodeMsgData   = new NodeMsgData();
  */
 public static synchronized int[] getAnalogVals() {
 	return analogVals;
+}
+/**
+ * @return object analogVals of type int[]
+ */
+public synchronized void setAnalogValue(int index, int value) {
+	  analogVals[index] = value;
 }
 
 /**

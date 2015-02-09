@@ -18,6 +18,7 @@ import msg.NodeMsgData;
 import simplemysql.SocketMySql;
 import sync.controller.NodeData;
 import sync.controller.ServerController;
+import sync.system.SyncUtils;
 import jssc.SerialPortException;
 
 public class UDPServerThread extends Thread implements SyncronNetwork {
@@ -34,7 +35,7 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	public static InetAddress		receiverAddress		= null;
 	public static InetAddress		returnIP			= null;
 	// 49 bytes in typical formated 12 value analog data string //
-	// "0123456789".getBytes();
+	// "0123456789".getBytes(); 
 	public static boolean[]			digiInput			= new boolean[10];
 	public static boolean[]			digiOutput			= new boolean[10];
 	public static volatile boolean	newDataAvail		= false;
@@ -56,7 +57,7 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 	public static String			IP					= syncronIP;
 	// UDP Processing
 	public static int[]				analogVals			= null;
-	public static int				databaseDelay		= 5 * 60* 1000; // minutes
+	public static int				databaseDelay		=  5000; //5 * 60* 1000; // minutes
 	public static Thread			dbInjectorThread	= null;
 
 	// ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,16 +91,20 @@ public class UDPServerThread extends Thread implements SyncronNetwork {
 						int[] vals = controller.dataHandler.getAnalogArray();
 						// "INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ('Analog_0',400)";
 						// String quFrag = "I"
-						String query = "INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ";
+						//String query = "INSERT INTO `DataLive` VALUES (";
+
+
+						String query = "INSERT INTO `analog` VALUES (null, null, 'Node01', " ;
+
 						if (newDataAvail) {
 							String end = ";";
 							for (int i = 0; i < vals.length; i++) {
-								end = i == (vals.length - 1) ? ";" : ", ";
-								query += String.format("('Analog_%s',%s)%s", i, vals[i],end);
+								end = i == (vals.length - 1) ? ");" : ", ";
+								query += String.format("%s%s", vals[i], end);
 //								query += String.format("INSERT INTO `DataLive`(`device_name`, `live_value`) VALUES ('Analog_%s',%s)%s", i, vals[i],end);
 							}
-							System.out.println((new SimpleDateFormat("[MMM-dd HH.mm.ss.SSS]")).format(new Date()) + "data insert into Db");
-							//System.out.println(query);
+							System.out.println(SyncUtils.getDateBox() + "data inserted into Db");
+							System.out.println(query);
 							sql.insertQuery(query);
 						}
 						newDataAvail=false;

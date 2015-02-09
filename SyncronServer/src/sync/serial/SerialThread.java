@@ -15,7 +15,7 @@ public class SerialThread extends Thread {
 	static SerialPort		serialPort	= new SerialPort("COM4");
 	public static int		i			= 0;
 	public static int		avail		= 0;
-	public static int[]				mAnalogVals				= new int[12];
+	public static volatile int[]				mAnalogVals				= new int[12];
 	// Analog input values
 	public int[]			analogVals	= null;
 	public static String			mAnalogString			= null;

@@ -17,7 +17,7 @@ public class ServerController implements MsgConstants {
 	private static ServerController	serverController	= new ServerController();
 
 	// handle received messages
-	public static DataHandler		dataHandler			= new DataHandler();
+	public static DataHandler		dataHandler			= DataHandler.getInstance();
 
 	MessageWrapper					msg					= new MessageWrapper();
 	public static NodeData			nodeData			= new NodeData();

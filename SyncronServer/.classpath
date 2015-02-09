@@ -8,5 +8,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/SyncronServer/javadoc/jssc-2.8.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Ardulink"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Ardulink_Jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
