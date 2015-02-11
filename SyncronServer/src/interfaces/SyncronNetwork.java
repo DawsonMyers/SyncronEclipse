@@ -55,4 +55,6 @@ public interface SyncronNetwork {
 			sb.append(b == true ? "1" : "0");
 		return sb.toString();
 	}
+	
 }
+

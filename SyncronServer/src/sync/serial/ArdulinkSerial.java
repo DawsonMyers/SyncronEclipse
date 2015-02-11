@@ -13,13 +13,15 @@ import org.zu.ardulink.event.ConnectionEvent;
 import org.zu.ardulink.event.ConnectionListener;
 import org.zu.ardulink.event.DisconnectionEvent;
 
+import sync.controller.ServerController;
+
 /**
  * @author Dawson
  *
  */
 public class ArdulinkSerial implements SerialConstants{
 
-	
+	ServerController	controller	= ServerController.getInstance();
 	
 	public static int[]		serialAnalogVals	= new int[ANALOG_PINS];
 
@@ -33,16 +35,18 @@ public class ArdulinkSerial implements SerialConstants{
 	public static int		pinQuit				= 10;
 	private static int		noLoop				= 0;
 	public static boolean	pinStatus3			= false;
-
+	public static Link link;
+	public static AnalogPin[] analogPins	= new AnalogPin[ANALOG_PINS];
+	//public static Map<AnalogPins> analogPinsAl= ;
 	/**
 	 * 
 	 */
-
+public static ArdulinkSerial aSerial = new ArdulinkSerial();
 
 	public static void main(String[] args) {
 
 
-		Link link = Link.getDefaultInstance();
+		  link = Link.getDefaultInstance();
 
 		link.addConnectionListener(new ConnectionListener() {
 
@@ -59,27 +63,13 @@ public class ArdulinkSerial implements SerialConstants{
 
 		link.connect(PORT);
 		
+		for(int i = 0; i < analogPins.length; i++) {
+			analogPins[i] = new AnalogPin();
+			analogPins[i].initPin(link, i, aSerial);
+		}
 		
-		link.addAnalogReadChangeListener(new AnalogReadChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * org.zu.ardulink.event.AnalogReadChangeListener#getPinListening()
-			 */
-			@Override
-			public int getPinListening() {
-				return pin;
-			}
+		
 
-			@Override
-			public void stateChanged(AnalogReadChangeEvent e) {
-
-				serialAnalogVals[pin] = e.getValue();
-				System.out.println(e.getValue());
-
-			}
-
-		});
 	}
 
 	public ArdulinkSerial() {
@@ -87,5 +77,10 @@ public class ArdulinkSerial implements SerialConstants{
 
 	}
 
+	
+	public static void setPin(int pin, int state) {
+		link = Link.getDefaultInstance();
+		link.sendPowerPinSwitch(pin, state);
+	}
 
 }
