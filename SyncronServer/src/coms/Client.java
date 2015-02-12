@@ -40,9 +40,14 @@ public class Client {
 		ip = mPacket.getAddress();
 		address = mPacket.getSocketAddress();
 		setId();
+		if (!UdpHandler.connectedClients.containsKey(getId())) {
+			UdpHandler.connectedClients.put(getId(), this);
+		}
 
 	}
 
+	// Setters/Getters
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * @return object address of type SocketAddress
@@ -52,7 +57,8 @@ public class Client {
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address
+	 *            the address to set
 	 */
 	public void setAddress(SocketAddress address) {
 		this.address = address;
@@ -66,7 +72,8 @@ public class Client {
 	}
 
 	/**
-	 * @param port the port to set
+	 * @param port
+	 *            the port to set
 	 */
 	public void setPort(int port) {
 		this.port = port;
@@ -108,7 +115,8 @@ public class Client {
 	 *            the id to set
 	 */
 	public void setId() {
-		id = (ip.getHostAddress().toString() + "|" + port);
+		id = (ip.getHostAddress().toString().replace("/", "") + ":" + port);
+		
 	}
 
 	/**

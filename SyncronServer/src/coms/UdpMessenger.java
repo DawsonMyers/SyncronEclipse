@@ -3,11 +3,14 @@
  */
 package coms;
 
+//import  org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
+import  org.apache.commons.lang3.builder.*;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -32,15 +35,22 @@ public  class UdpMessenger implements Runnable, ComConstants {
 	public static Thread			listenerThread	= null;
 	public static int				portUdp			= 10000;
 	public static int				portSend = 10005;
+	public static int				count = 0;
 
+
+	// 
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public UdpMessenger() {}
 
 	// son = (JSONObject)new JSONParser().parse(jason);
 
 
-	
-	
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+	 
  
 	@Override
 	public void run() {
@@ -67,6 +77,8 @@ public  class UdpMessenger implements Runnable, ComConstants {
 		}
 	}
 
+	// 	Sender
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public synchronized static void sendUDP(MsgPacket p)   {
 		//byte[] buf = UdpBuffer.clone();
@@ -92,16 +104,21 @@ public  class UdpMessenger implements Runnable, ComConstants {
 	}
 
 
+	// 	Receiver
+	// ///////////////////////////////////////////////////////////////////////////////////
+
 	public synchronized static void StartUDPListener() throws IOException {
 
 		DatagramSocket sockListener  = new DatagramSocket(portUdp);
 	//	if (sockListener == null) udpSocket = new DatagramSocket(portUdp);
 		listenerThread = new Thread("UdpListener") {
+													private int	count;
+
 													public void run() {
 										
 														String jasonMsg = "";
 														DatagramPacket packet;
-														Msg msg = new Msg();
+														
 														byte[] buf = UdpBuffer.clone();
 														while (true) {
 															packet = new DatagramPacket(buf, buf.length);
@@ -116,17 +133,20 @@ public  class UdpMessenger implements Runnable, ComConstants {
 																e.printStackTrace();
 																SyncUtils.getDateBox();
 															}
-										
+															
 															buf = packet.getData();
-															jasonMsg = new String(buf);
+															jasonMsg = new String(buf).trim().replace("}}", "}");
 										
-															System.out.println("jasonMsg = " + jasonMsg);
+															System.out.println("\t\t\t\t\t\t\t\t MSG COUNT = " + count);
+															count++;
+															//System.out.println("jasonMsg = " + jasonMsg);
+															Msg msg = new Msg(jasonMsg, packet);
 															msg.setJsonMsg(jasonMsg);
 															msg.setPacket(packet);
 															System.out.println(packet.getSocketAddress());
 															
-															UdpHandler.addToQue(msg);
-															System.out.println("msg pulled from list = " + (UdpHandler.QueSize()) );
+															UdpHandler.incomingMsgBuffer.addToQue(msg);
+															System.out.println("msg pulled from list = " + (UdpHandler.incomingMsgBuffer.queSize()) );
 														}
 													}
 		};

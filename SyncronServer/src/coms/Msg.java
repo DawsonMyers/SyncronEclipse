@@ -5,6 +5,9 @@ package coms;
 
 import java.net.DatagramPacket;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * @author Dawson
  *
@@ -16,6 +19,7 @@ public class Msg {
 	 */
 	public Msg() {}
 	public Msg(String msg, DatagramPacket packet) {
+		Client client = new Client(packet,3333333);
 		this.packet = packet;
 		jsonMsg = msg;
 	}
@@ -46,6 +50,12 @@ public class Msg {
 	}
 	String jsonMsg;
 
+	
+	
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }
 
 
