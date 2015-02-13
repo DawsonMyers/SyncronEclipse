@@ -62,15 +62,15 @@ public class Tester implements ComConstants {
 		obj.put("value", s.trim()); // s);
 
 
-		String jason = obj.toJSONString();
-		byte[] b = jason.getBytes();
-		//System.out.println(jason);
-		System.out.println("Num of bytes = " + jason.getBytes().length);
+		String json = obj.toJSONString();
+		byte[] b = json.getBytes();
+		 
+		System.out.println("Num of bytes = " + json.getBytes().length);
 
 		DatagramPacket dp = new DatagramPacket(b, b.length, ipAddress, udp_Port);
 		c = new Client(dp, 8888);
 
-		MsgPacket msgPacket = new MsgPacket(c, jason, dp);
+		MsgPacket msgPacket = new MsgPacket(c, json, dp);
 
 		return msgPacket;
 

@@ -53,4 +53,10 @@ public interface ComConstants {
 	public static String		HTTP_DAWSON				= "http://dawsonmyers.ca";
 	public static String		HTTP_SERVER				= "http://dawsonmyers.ca";
 	public static final int		PORT_SERVER				= 6005;
+	
+	public String	PROTOCOL	= "protocol";
+	public String	CMD			= "cmd";
+	public String	TARGET_ID	= "target";
+	public String	PIN			= "pin";
+	public String	VALUE		= "value";
 }
