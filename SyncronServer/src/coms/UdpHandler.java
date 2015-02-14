@@ -34,27 +34,25 @@ import sync.system.SyncUtils;
  */
 public class UdpHandler extends Thread {
 
-	 public final static Logger  log = LoggerFactory.getLogger(UdpHandler.class.getName());
- 
-	  
-	public static int								counter					= 0;
-	public static MsgTimer							timer					= new MsgTimer();
+	public final static Logger					log					= LoggerFactory.getLogger(UdpHandler.class.getName());
+
+	public static int							counter				= 0;
+	public static MsgTimer						timer				= new MsgTimer();
 	public static volatile Map<String, Client>		connectedClients		= new HashMap<>();
-	public static volatile LinkedList<Msg>			MessageQue				= new LinkedList<>();
+	public static volatile LinkedList<Msg>			MessageQue			= new LinkedList<>();
 
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new
 	// MessageBuffer<Msg>();
 	public static volatile MessageBuffer<MsgPacket>	incomingMsgBufferPACKET	= new MessageBuffer<MsgPacket>();
 	public static volatile MessageBuffer<MsgPacket>	outgoingMsgBuffer		= new MessageBuffer<MsgPacket>();
 
-	public static UdpMessenger						udpMessenger;
-	public static Thread							udpMessengerThrd;
+	public static UdpMessenger					udpMessenger;
+	public static Thread						udpMessengerThrd;
 
-	
-	
-	
+	public static synchronized void sendMessage(MsgPacket msg) {
+		outgoingMsgBuffer.addToQue(msg);
+	}
 
-	
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
@@ -66,16 +64,17 @@ public class UdpHandler extends Thread {
 	/**
 	 * @param args
 	 */
-	//@Profiled()
-	//@Loggable(Loggable.DEBUG) 
-	//public static void main(String[] args) {
-		
+	// @Profiled()
+	// @Loggable(Loggable.DEBUG)
+	// public static void main(String[] args) {
+
 	@Profiled
-		public UdpHandler() {
-			//final Logger slf4jLogger = LoggerFactory.getLogger(this.getClass());
-			log.info("Logger started");
-			start();
-		}
+	public UdpHandler() {
+		// final Logger slf4jLogger =
+		// LoggerFactory.getLogger(this.getClass());
+		log.info("Logger started");
+		start();
+	}
 
 	public void run() {
 		udpMessenger = new UdpMessenger();
@@ -83,7 +82,6 @@ public class UdpHandler extends Thread {
 		udpMessengerThrd = new Thread(udpMessenger);
 		udpMessengerThrd.start();
 
-		
 		log.info("Starting msgHandler");
 		startMsgHandler();
 
@@ -109,7 +107,7 @@ public class UdpHandler extends Thread {
 			// UdpMessenger.sendUDP(packet);
 
 			outgoingMsgBuffer.addToQue(packet);
-			//outgoingMsgBuffer.addToQue(packet);
+			// outgoingMsgBuffer.addToQue(packet);
 
 		}
 
@@ -122,20 +120,19 @@ public class UdpHandler extends Thread {
 	// Incomming msg que
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-
 	// Msg handler
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-
 	public static Thread	msgHandlerThread	= null;
+
 	@Profiled
-	@Loggable(Loggable.DEBUG) 
+	@Loggable(Loggable.DEBUG)
 	public static synchronized void startMsgHandler() {
 
 		Thread msgHandlerThread = new Thread("MsgHandler") {
 
 			JSONObject	json		= null;
-			ActiveMsg	activeMsg	= null;
+			ActiveMsg		activeMsg	= null;
 
 			public void run() {
 
@@ -151,17 +148,18 @@ public class UdpHandler extends Thread {
 								SyncUtils.getDateBox();
 							}
 						}
-
 					} else {
 						System.out.println("msgHandler is processing a msg");
 						handleMsg();
-
 					}
 				}
 			}
+
 			@Profiled
 			private synchronized void handleMsg() {
 				MsgPacket msgPacket = incomingMsgBufferPACKET.nextFromQue();
+				msgPacket.addNewClient();
+				log.info("INCOMMING MSG OF TYPE:  DIGITAL");
 
 				// Parse and extract msg data
 				MsgParser.parseMsg(msgPacket);
@@ -169,11 +167,18 @@ public class UdpHandler extends Thread {
 				timer.finish();
 				System.out.print("\t\t\t\t\t\t\t\t");
 				timer.print();
-				System.out.println("Received msg contents: \n" + msgPacket.getJasonMsg()); // activeMsg.toString());
-				
-				
-				ArdulinkSerial.setPin(msgPacket.getPin(),msgPacket.getValue());
-				if(msgPacket.cmd == "analog") {
+				System.out.println("Received msg contents: \n" + msgPacket.getJsonMsg());// activeMsg.toString());
+				System.out.println(msgPacket.cmd);// activeMsg.toString());
+
+				ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
+				if (msgPacket.cmd.equals("digital")) {
+					log.info("INCOMMING MSG OF TYPE:  DIGITAL");
+					msgPacket.setCmd("log");
+					// msgPacket.setCmd("log");
+					sendMessage(msgPacket);
+				}
+				if (msgPacket.cmd == "log") {
+					log.info(msgPacket.value);
 				}
 			}
 		};
@@ -183,13 +188,13 @@ public class UdpHandler extends Thread {
 	// Dispatcher
 	// ///////////////////////////////////////////////////////////////////////////////////
 	@Profiled
-	@Loggable(Loggable.DEBUG) 
+	@Loggable(Loggable.DEBUG)
 	public static synchronized void msgDispatchHandler() {
 		Thread t = new Thread("MsgDispatcher") {
 
 			public void run() {
 				System.out.println("MsgDispatcher started");
-				log.info("MsgDispatcher	started" );
+				log.info("MsgDispatcher	started");
 				while (true) {
 
 					if (outgoingMsgBuffer.queEmpty()) {
@@ -212,12 +217,13 @@ public class UdpHandler extends Thread {
 					}
 				}
 			}
+
 			@Profiled
 			private synchronized void handleSendMsg() {
 				log.info("MsgDispatcher	handling send msg");
 				MsgPacket msg = outgoingMsgBuffer.nextFromQue();
 				log.info("MsgDispatcher	pulled msg from que to send");
-	 
+
 				UdpMessenger.sendUDP(msg);
 			}
 		};

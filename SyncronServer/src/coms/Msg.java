@@ -19,7 +19,7 @@ public class Msg {
 	 */
 	public Msg() {}
 	public Msg(String msg, DatagramPacket packet) {
-		Client client = new Client(packet,3333333);
+		Client client = new Client(packet );
 		this.packet = packet;
 		jsonMsg = msg;
 	}

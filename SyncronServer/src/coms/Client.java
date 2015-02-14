@@ -14,28 +14,28 @@ import java.util.Date;
  */
 public class Client {
 
-	public InetAddress		ip;
-	public int				port;
-	public String			id;
-	public int				mDeviceId		= -1;
+	public InetAddress		ip = null;
+	public int				port = 0;
+	public String			id = "";
+	public String				mDeviceId		= "";
 	public int				sendCount		= 0;
 	public int				receiveCount	= 0;
-	public Date				dateAdded;
-	public DatagramPacket	mPacket;				// = new
+	public Date				dateAdded = null;
+	public DatagramPacket	mPacket = null;				// = new
 													// DatagramPacket(UdpBuffer,
 													// UdpBuffer.length,
 													// receiverAddress,
 													// udpPort);
-	public SocketAddress	address;
+	public SocketAddress	address = null;
 
 	/**
 	 * 
 	 */
 	public Client() {}
 
-	public Client(DatagramPacket packet, int deviceId) {
+	public Client(DatagramPacket packet) { //, String id) {
 		mPacket = packet;
-		mDeviceId = deviceId;
+		this.id = packet.getSocketAddress().toString();
 		port = mPacket.getPort();
 		ip = mPacket.getAddress();
 		address = mPacket.getSocketAddress();
@@ -120,9 +120,9 @@ public class Client {
 	}
 
 	/**
-	 * @return object deviceId of type int
+	 * @return object deviceId of type String
 	 */
-	public int getDeviceId() {
+	public String getDeviceId() {
 		return this.mDeviceId;
 	}
 
@@ -130,7 +130,7 @@ public class Client {
 	 * @param deviceId
 	 *            the deviceId to set
 	 */
-	public void setDeviceId(int deviceId) {
+	public void setDeviceId(String deviceId) {
 		this.mDeviceId = deviceId;
 	}
 

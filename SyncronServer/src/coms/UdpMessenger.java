@@ -24,19 +24,18 @@ import sync.system.SyncUtils;
  */
 public class UdpMessenger implements Runnable, ComConstants {
 
-	public static DatagramSocket	udpSocket		= null;
-	public static InetAddress		receiverAddress	= null;
-	public static int				UdpBufferLength	= 1024;
-	public static byte[]			UdpBuffer		= new byte[UdpBufferLength];
-	public static String			jasonString		= "";
-	public static String			jasonMsg		= "";
+	public static DatagramSocket	udpSocket			= null;
+	public static InetAddress	receiverAddress	= null;
+	public static int			UdpBufferLength	= 1024;
+	public static byte[]		UdpBuffer			= new byte[UdpBufferLength];
+	public static String		jasonString		= "";
+	public static String		jasonMsg			= "";
 	public static JSONObject		obj				= new JSONObject();
-	public static Thread			sendThread		= null;
-	public static Thread			listenerThread	= null;
-	public static int				portUdp			= 10000;
-	public static int				portSend		= 10005;
-	public static int				count			= 0;
-
+	public static Thread		sendThread		= null;
+	public static Thread		listenerThread		= null;
+	public static int			portUdp			= 10000;
+	public static int			portSend			= 10005;
+	public static int			count			= 0;
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
@@ -47,13 +46,11 @@ public class UdpMessenger implements Runnable, ComConstants {
 
 	// son = (JSONObject)new JSONParser().parse(jason);
 
-
 	@Override
 	public String toString() {
 		return "";// ReflectionToStringBuilder.toString(this,
-					// ToStringStyle.MULTI_LINE_STYLE);
+				// ToStringStyle.MULTI_LINE_STYLE);
 	}
-
 
 	@Override
 	public void run() {
@@ -71,7 +68,6 @@ public class UdpMessenger implements Runnable, ComConstants {
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// [UDP]
 
-
 	public synchronized static void initUDP() {
 		try {
 			udpSocket = new DatagramSocket(portSend);
@@ -84,22 +80,26 @@ public class UdpMessenger implements Runnable, ComConstants {
 
 	// Sender
 	// ///////////////////////////////////////////////////////////////////////////////////
-	/**@Loggable(Loggable.DEBUG)
-	*/
+	/**
+	 * @Loggable(Loggable.DEBUG)
+	 */
 	public synchronized static void sendUDP(MsgPacket p) {
 		// byte[] buf = UdpBuffer.clone();
 		sendThread = new Thread("UdpSender") {
 			public void run() {
 				Client c = p.getClient();
 				try (DatagramSocket udpSocket = new DatagramSocket()) {
-					// if (udpSocket == null) udpSocket = new
-					// DatagramSocket(portSend);// initUDP();
-					byte[] buf = p.getJasonMsg().getBytes();
-					DatagramPacket packet = new DatagramPacket(buf, buf.length, c.getAddress());
+				  
+					byte[] buf = p.getJsonMsg().getBytes();
 
-					DatagramPacket packet1 = new DatagramPacket(buf, buf.length, c.ip.getByName("192.168.1.109"), portUdp);
-					packet1.setData(buf);
-					udpSocket.send(packet1);
+					// DatagramPacket packet = new DatagramPacket(buf,
+					// buf.length, c.getAddress());
+					//
+					// DatagramPacket packet1 = new DatagramPacket(buf,
+					// buf.length, c.ip.getByName("192.168.1.109"),
+					// portUdp);
+					// packet1.setData(buf);
+					udpSocket.send(p.dp);
 				} catch (IOException e) {
 					e.printStackTrace();
 					SyncUtils.getDateBox();
@@ -110,12 +110,10 @@ public class UdpMessenger implements Runnable, ComConstants {
 		sendThread.start();
 	}
 
-
 	// Receiver
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public synchronized static void StartUDPListener() throws IOException {
-
 
 		// DatagramSocket sockListener = new DatagramSocket(portUdp);
 		// if (sockListener == null) udpSocket = new DatagramSocket(portUdp);
@@ -132,7 +130,6 @@ public class UdpMessenger implements Runnable, ComConstants {
 					// if (sockListener == null)
 					// sockListener = new DatagramSocket(portUdp);
 
-
 					byte[] buf = UdpBuffer.clone();
 					while (true) {
 
@@ -141,7 +138,6 @@ public class UdpMessenger implements Runnable, ComConstants {
 							sockListener.receive(packet);
 
 							System.out.println("++++++++++PACKET RECEIVED");
-
 
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -165,7 +161,6 @@ public class UdpMessenger implements Runnable, ComConstants {
 						// UdpHandler.incomingMsgBufferPACKET.addToQue(msg);
 						UdpHandler.incomingMsgBufferPACKET.addToQue(msgPacket);
 
-
 						System.out.println("msg pulled from list = " + (UdpHandler.incomingMsgBufferPACKET.queSize()));
 
 						// sockListener.close();
@@ -175,11 +170,9 @@ public class UdpMessenger implements Runnable, ComConstants {
 					SyncUtils.getDateBox();
 				}
 
-
 			}
 		};
 		listenerThread.start();
 	}
-
 
 }

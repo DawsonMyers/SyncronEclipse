@@ -4,58 +4,71 @@
 package coms;
 
 import java.net.DatagramPacket;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.simple.JSONObject;
+// import net.sf.json.JSONObject;
+// import net.sf.json.JSONSerializer;
 
-import net.sf.json.JSONObject;
-//import net.sf.json.JSONSerializer;
+import sync.system.SyncUtils;
 
 /**
  * @author Dawson
  */
 public class MsgPacket implements ComConstants {
-public final static Logger log = LoggerFactory.getLogger(MsgPacket.class.getName());
-	public DatagramPacket	dp;
-	private Client			mClient;
+	public final static Logger	log			= LoggerFactory.getLogger(MsgPacket.class.getName());
+	public DatagramPacket		dp			= null;													;
+	private Client				mClient		= null;													;
 
-	private String			mJsonMsg;
+	private String				mJsonMsg	= "";
+	Map<String, String>			jMap		= null;
 
-	public String			protocol	= null;
-	public String			cmd			= null;
-	public String			targetId	= null;
-	public String			pin			= "";
-	public String			value		= null;
-	public Client			client		= null;
+	public String				protocol	= "";
+	public String				cmd			= "";
+	public String				targetId	= "";
+	public String				pin			= "";
+	public String				value		= "";
+	public Client				client		= null;
 
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public MsgPacket() {}
 
-	public MsgPacket(Client client, String jasonMsg, DatagramPacket dp) {
+	public MsgPacket(Client client, String jsonMsg, DatagramPacket dp) {
 		setDp(dp);
 		setClient(client);
-		setJsonMsg(jasonMsg);
+		setJsonMsg(jsonMsg);
+		addNewClient();
 	}
 
-	public MsgPacket(Client client, String jasonMsg) {
+	public MsgPacket(Client client, String jsonMsg) {
 
 		setClient(client);
-		setJsonMsg(jasonMsg);
+		setJsonMsg(jsonMsg);
+		// addNewClient();
 	}
 
 	public MsgPacket(String jsonMsg, DatagramPacket dp) {
 		setDp(dp);
 		setClient(client);
 		setJsonMsg(jsonMsg);
+		addNewClient();
 	}
 
-	// Getters/Setters
+	// Message Getters/Setters
 	// ///////////////////////////////////////////////////////////////////////////////////
+
+	public void addNewClient() {
+		client = new Client(dp);
+
+	}
+
 
 	/**
 	 * @return object dp of type DatagramPacket
@@ -91,9 +104,12 @@ public final static Logger log = LoggerFactory.getLogger(MsgPacket.class.getName
 	/**
 	 * @return object jasonMsg of type String
 	 */
-	public String getJasonMsg() {
-		return this.mJsonMsg;
-	}
+	// public String getJsonMsg() {
+	// return this.mJsonMsg;
+	// }
+
+	// Set message data
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * @param jsonMsg
@@ -101,35 +117,80 @@ public final static Logger log = LoggerFactory.getLogger(MsgPacket.class.getName
 	 */
 	public void setJsonMsg(String jsonMsg) {
 		this.mJsonMsg = jsonMsg;
+		setPacketData();
 	}
 
-	public void extractJsonData(Map<String,String> json) {
+	public void setPacketData(String msgString) {
+		dp.setData(msgString.getBytes());
+	}
+
+	public void setPacketData() {
+		dp.setData(mJsonMsg.getBytes());
+	}
+
+	public void extractJsonData(Map<String, String> json) {
 		log.debug("Extracting data");
-		//protocol = (String) json.get(PROTOCAL);
+		// protocol = (String) json.get(PROTOCAL);
 		cmd = (String) json.get(CMD).toString();
-		//targetId = (String) json.get(TARGET_ID).toString();
+		// targetId = (String) json.get(TARGET_ID).toString();
 		pin = (String) json.get(PIN).toString();
 		value = (String) json.get(VALUE).toString();
 	}
 
-
-	@Override
-	public String toString() {
-		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+	public String toJsonString(Map<String, String> jMap) {
+		try {
+			JSONObject json = new JSONObject();
+			mJsonMsg = json.toJSONString(jMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			SyncUtils.getDateBox();
+		}
+		return mJsonMsg;
 	}
 
+
+	// Member setter/getter
+	// ///////////////////////////////////////////////////////////////////////////////////
+
 	/**
-	 * @return
+	 * @return object jasonMsg of type String
 	 */
 	public String getJsonMsg() {
 		return mJsonMsg;
 	}
+
 	public int getPin() {
 		return Integer.parseInt(pin);
-		
+
 	}
-	public int getValue() {
+
+	public int getIntValue() {
 		return Integer.parseInt(value);
-		
+
+	}
+
+	public String getStringValue() {
+		return value;
+
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
+
+	}
+
+	public void setValue(String val) {
+		value = val;
+
+	}
+
+	public void setCmd(String cmd) {
+		this.cmd = cmd;
+
+	}
+
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

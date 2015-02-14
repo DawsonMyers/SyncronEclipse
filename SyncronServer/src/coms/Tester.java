@@ -6,6 +6,8 @@ package coms;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -53,7 +55,12 @@ public class Tester implements ComConstants {
 
 		String address = ipAddress.toString().replace("/", "");
 		JSONObject obj = new JSONObject();
+		JSONObject obj1 = new JSONObject();
 
+		Map<String, String> msgMap = new HashMap<>();
+		msgMap.put("key", "Value");
+		obj1.toJSONString(msgMap);
+		
 		//obj.put(PROTOCAL, "syncron");
 		obj.put(CMD, "analog");
 		obj.put(PIN, "4");
@@ -68,7 +75,7 @@ public class Tester implements ComConstants {
 		System.out.println("Num of bytes = " + json.getBytes().length);
 
 		DatagramPacket dp = new DatagramPacket(b, b.length, ipAddress, udp_Port);
-		c = new Client(dp, 8888);
+		c = new Client(dp);
 
 		MsgPacket msgPacket = new MsgPacket(c, json, dp);
 
