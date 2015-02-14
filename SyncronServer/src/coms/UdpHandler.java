@@ -25,16 +25,17 @@ import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
 
+import sync.serial.ArdulinkSerial;
 import sync.system.SyncUtils;
 
 /**
  * @author Dawson
  *
  */
-public class UdpHandler {
+public class UdpHandler extends Thread {
 
-	 private final static Logger  log = LoggerFactory.getLogger(UdpHandler.class.getName());
-
+	 public final static Logger  log = LoggerFactory.getLogger(UdpHandler.class.getName());
+ 
 	  
 	public static int								counter					= 0;
 	public static MsgTimer							timer					= new MsgTimer();
@@ -52,11 +53,6 @@ public class UdpHandler {
 	
 	
 	
-	@Profiled
-	public UdpHandler() {
-		//final Logger slf4jLogger = LoggerFactory.getLogger(this.getClass());
-		log.info("Logger started");
-	}
 
 	
 	@Override
@@ -70,25 +66,36 @@ public class UdpHandler {
 	/**
 	 * @param args
 	 */
+	//@Profiled()
+	//@Loggable(Loggable.DEBUG) 
+	//public static void main(String[] args) {
+		
 	@Profiled
-	@Loggable(Loggable.DEBUG) 
-	public static void main(String[] args) {
+		public UdpHandler() {
+			//final Logger slf4jLogger = LoggerFactory.getLogger(this.getClass());
+			log.info("Logger started");
+			start();
+		}
 
+	public void run() {
 		udpMessenger = new UdpMessenger();
 
 		udpMessengerThrd = new Thread(udpMessenger);
 		udpMessengerThrd.start();
 
+		
 		log.info("Starting msgHandler");
 		startMsgHandler();
 
 		log.info("Starting msgDispatchHandler");
 		msgDispatchHandler();
+		String s = "empty";
+		Tester t = new Tester();
+		MsgPacket packet = t.initPacket(s);
 
 		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
 
 		while (true) {
-			String s = "empty";
 			try {
 				s = (String) cin.readLine();
 			} catch (IOException e) {
@@ -99,12 +106,10 @@ public class UdpHandler {
 			s = "empty";
 			timer.start();
 			// byte[] b = s.getBytes();
-			Tester t = new Tester();
-			MsgPacket packet = t.initPacket(s);
 			// UdpMessenger.sendUDP(packet);
 
 			outgoingMsgBuffer.addToQue(packet);
-			outgoingMsgBuffer.addToQue(packet);
+			//outgoingMsgBuffer.addToQue(packet);
 
 		}
 
@@ -165,7 +170,11 @@ public class UdpHandler {
 				System.out.print("\t\t\t\t\t\t\t\t");
 				timer.print();
 				System.out.println("Received msg contents: \n" + msgPacket.getJasonMsg()); // activeMsg.toString());
-
+				
+				
+				ArdulinkSerial.setPin(msgPacket.getPin(),msgPacket.getValue());
+				if(msgPacket.cmd == "analog") {
+				}
 			}
 		};
 		msgHandlerThread.start();
@@ -179,7 +188,8 @@ public class UdpHandler {
 		Thread t = new Thread("MsgDispatcher") {
 
 			public void run() {
-				System.out.println("MsgDispatcher	started");
+				System.out.println("MsgDispatcher started");
+				log.info("MsgDispatcher	started" );
 				while (true) {
 
 					if (outgoingMsgBuffer.queEmpty()) {
@@ -187,7 +197,7 @@ public class UdpHandler {
 							try {
 
 								outgoingMsgBuffer.wait();
-								System.out.println("MsgDispatcher	NOTIFIED");
+								log.info("MsgDispatcher	NOTIFIED");
 
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -196,7 +206,7 @@ public class UdpHandler {
 						}
 
 					} else {
-						System.out.println("  MsgDispatcher is processing a msg");
+						log.info("MsgDispatcher	is processing a msg");
 						handleSendMsg();
 
 					}
@@ -204,9 +214,9 @@ public class UdpHandler {
 			}
 			@Profiled
 			private synchronized void handleSendMsg() {
-				System.out.println("MsgDispatcher	handling send msg");
+				log.info("MsgDispatcher	handling send msg");
 				MsgPacket msg = outgoingMsgBuffer.nextFromQue();
-				System.out.println("MsgDispatcher	pulled msg from que to send");
+				log.info("MsgDispatcher	pulled msg from que to send");
 	 
 				UdpMessenger.sendUDP(msg);
 			}

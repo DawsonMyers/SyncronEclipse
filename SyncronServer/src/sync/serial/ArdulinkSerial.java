@@ -3,15 +3,14 @@
  */
 package sync.serial;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zu.ardulink.Link;
-import org.zu.ardulink.event.AnalogReadChangeEvent;
-import org.zu.ardulink.event.AnalogReadChangeListener;
 import org.zu.ardulink.event.ConnectionEvent;
 import org.zu.ardulink.event.ConnectionListener;
 import org.zu.ardulink.event.DisconnectionEvent;
+
+import coms.UdpHandler;
 
 import sync.controller.ServerController;
 
@@ -20,7 +19,7 @@ import sync.controller.ServerController;
  *
  */
 public class ArdulinkSerial implements SerialConstants{
-
+public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.getName());
 	ServerController	controller	= ServerController.getInstance();
 	
 	public static int[]		serialAnalogVals	= new int[ANALOG_PINS];
@@ -43,9 +42,11 @@ public class ArdulinkSerial implements SerialConstants{
 	 */
 public static ArdulinkSerial aSerial = new ArdulinkSerial();
 
+public static UdpHandler udpHandler = null;
 	public static void main(String[] args) {
 
-
+		udpHandler = new UdpHandler();
+		//udpHandler.start();
 		  link = Link.getDefaultInstance();
 
 		link.addConnectionListener(new ConnectionListener() {
@@ -73,10 +74,16 @@ public static ArdulinkSerial aSerial = new ArdulinkSerial();
 	}
 
 	public ArdulinkSerial() {
-
-
+		
+		aSerial = this;
 	}
 
+	public static ArdulinkSerial getInstance() {
+		
+		return aSerial;
+		
+	}
+	
 	
 	public static void setPin(int pin, int state) {
 		link = Link.getDefaultInstance();

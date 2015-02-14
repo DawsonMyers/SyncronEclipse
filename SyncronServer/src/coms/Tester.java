@@ -54,12 +54,12 @@ public class Tester implements ComConstants {
 		String address = ipAddress.toString().replace("/", "");
 		JSONObject obj = new JSONObject();
 
-		obj.put(PROTOCAL, "syncron");
-		obj.put(CMD, "digitalOut");
-		obj.put(PIN, "10");
-		obj.put(VALUE, ""); // s);
-		obj.put(TARGET_ID, address); // s);
-		obj.put("value", s.trim()); // s);
+		//obj.put(PROTOCAL, "syncron");
+		obj.put(CMD, "analog");
+		obj.put(PIN, "4");
+		obj.put(VALUE, "1"); // s);
+		//obj.put(TARGET_ID, "none"); // s);address
+		obj.put("value", "1"); //s.trim()); // s);
 
 
 		String json = obj.toJSONString();
