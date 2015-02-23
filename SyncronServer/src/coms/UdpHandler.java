@@ -48,7 +48,20 @@ public class UdpHandler extends Thread {
 
 	public static UdpMessenger					udpMessenger;
 	public static Thread						udpMessengerThrd;
-
+	public static UdpHandler handler;
+	
+	
+	
+	
+	//	Started in ArdulinkSerial
+	
+//	public static void main(String[] args) {
+//		handler = new UdpHandler();
+//		
+//	}
+	
+	
+	
 	public static synchronized void sendMessage(MsgPacket msg) {
 		outgoingMsgBuffer.addToQue(msg);
 	}
