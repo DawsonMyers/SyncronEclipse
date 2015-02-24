@@ -21,19 +21,20 @@ import sync.system.SyncUtils;
  * @author Dawson
  */
 public class MsgPacket implements ComConstants {
-	public final static Logger	log			= LoggerFactory.getLogger(MsgPacket.class.getName());
-	public DatagramPacket		dp			= null;													;
-	private Client				mClient		= null;													;
+	public final static Logger	log		= LoggerFactory.getLogger(MsgPacket.class.getName());
+	public DatagramPacket		dp		= null;										;
+	private Client				mClient	= null;										;
 
 	private String				mJsonMsg	= "";
 	Map<String, String>			jMap		= null;
 
 	public String				protocol	= "";
-	public String				cmd			= "";
+	public String				type		= "";
 	public String				targetId	= "";
-	public String				pin			= "";
-	public String				value		= "";
-	public Client				client		= null;
+	public String				pin		= "";
+	public String				value	= "";
+
+	// public Client client = null;
 
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ public class MsgPacket implements ComConstants {
 
 	public MsgPacket(String jsonMsg, DatagramPacket dp) {
 		setDp(dp);
-		setClient(client);
+		// setClient(client);
 		setJsonMsg(jsonMsg);
 		addNewClient();
 	}
@@ -65,10 +66,9 @@ public class MsgPacket implements ComConstants {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void addNewClient() {
-		client = new Client(dp);
+		mClient = new Client(dp);
 
 	}
-
 
 	/**
 	 * @return object dp of type DatagramPacket
@@ -79,12 +79,11 @@ public class MsgPacket implements ComConstants {
 
 	/**
 	 * @param dp
-	 *            the dp to set
+	 *             the dp to set
 	 */
 	public void setDp(DatagramPacket dp) {
 		this.dp = dp;
 	}
-
 
 	/**
 	 * @return object client of type Client
@@ -95,10 +94,11 @@ public class MsgPacket implements ComConstants {
 
 	/**
 	 * @param client
-	 *            the client to set
+	 *             the client to set
 	 */
 	public void setClient(Client client) {
-		this.mClient = client;
+		if (client == null) addNewClient();
+		else this.mClient = client;
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class MsgPacket implements ComConstants {
 
 	/**
 	 * @param jsonMsg
-	 *            the jasonMsg to set
+	 *             the jasonMsg to set
 	 */
 	public void setJsonMsg(String jsonMsg) {
 		this.mJsonMsg = jsonMsg;
@@ -128,16 +128,30 @@ public class MsgPacket implements ComConstants {
 		dp.setData(mJsonMsg.getBytes());
 	}
 
-	public void extractJsonData(Map<String, String> json) {
+	// public void extractJsonData(Map<String, String> json) {
+	public void extractJsonData(Map<String, Object> json) {
 		log.debug("Extracting data");
 		// protocol = (String) json.get(PROTOCAL);
-		cmd = (String) json.get(CMD).toString();
+		type = (String) json.get(fTYPE).toString();
+		switch (type) {
+			case tDIGITAL:
+				break;
+			case tANALOG:
+				break;
+			case tADMIN:
+				break;
+			case tUPDATE:
+				break;
+
+			default:
+				break;
+		}
 		// targetId = (String) json.get(TARGET_ID).toString();
-		pin = (String) json.get(PIN).toString();
-		value = (String) json.get(VALUE).toString();
+		pin = (String) json.get(fPIN).toString();
+		value = (String) json.get(fVALUE).toString();
 	}
 
-	public String toJsonString(Map<String, String> jMap) {
+	public String toJsonString(Map<String, Object> jMap) {
 		try {
 			JSONObject json = new JSONObject();
 			mJsonMsg = json.toJSONString(jMap);
@@ -147,7 +161,6 @@ public class MsgPacket implements ComConstants {
 		}
 		return mJsonMsg;
 	}
-
 
 	// Member setter/getter
 	// ///////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +198,7 @@ public class MsgPacket implements ComConstants {
 	}
 
 	public void setCmd(String cmd) {
-		this.cmd = cmd;
+		this.type = cmd;
 
 	}
 

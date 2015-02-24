@@ -36,7 +36,9 @@ public final static Logger log = LoggerFactory.getLogger(MsgParser.class.getName
 		log.info("Parsing JSON string");
 		 JsonParserFactory factory=JsonParserFactory.getInstance();
 		 JSONParser parser = factory.newJsonParser();
-		 Map<String,String> jsonData = parser.parseJson(jsonString);
+		 Map<String,Object> jsonData = parser.parseJson(jsonString);
+		 
+		 //Map<String,String> jsonData = parser.parseJson(jsonString);
 
 		 //String value=(String)jsonData.get("key2");
 		

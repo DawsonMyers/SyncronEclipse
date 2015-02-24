@@ -1,13 +1,16 @@
 /**
  * 
  */
-package coms.udp;
+package coms.udp.server;
+
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import coms.MessageBuffer;
 import coms.MsgPacket;
+import coms.udp.AbstractUdpHandler;
 
 /**
  * @author Dawson
@@ -43,12 +46,30 @@ public class UdpServerHandler extends AbstractUdpHandler {
 
 	@Override
 	public MessageBuffer<MsgPacket> getIncomingBuffer() {
-		return outgoingHandler.msgBuffer;
+		return incomingHandler.msgBuffer;
 	}
 
 	@Override
 	public MessageBuffer<MsgPacket> getOutgoingBuffer() {
 		return outgoingHandler.msgBuffer;
 	}
+
+
+	@Override
+	public void handleDigitalMessage(Map<String, Object> jmap) {}
+
+
+
+	@Override
+	public void handleAnalogMessage(Map<String, Object> jmap) {}
+
+
+	
+	@Override
+	public void handleAdminMessage(Map<String, Object> jmap) {}
+
+
+	@Override
+	public void handleUpdateMessage(Map<String, Object> jmap) {}
 
 }

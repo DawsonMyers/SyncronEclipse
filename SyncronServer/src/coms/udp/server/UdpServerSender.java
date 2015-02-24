@@ -1,17 +1,17 @@
 /**
  * 
  */
-package coms.udp;
+package coms.udp.server;
 
 import msg.MsgTimer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sync.serial.ArdulinkSerial;
 import coms.MsgPacket;
-import coms.MsgParser;
 import coms.UdpMessenger;
+import coms.udp.AbstractUdpDispatcher;
+import coms.udp.IUdp;
 
 /**
  * @author Dawson
@@ -27,9 +27,12 @@ public class UdpServerSender extends AbstractUdpDispatcher implements IUdp {
 	}
 
 	@Override
-	void handleMessage() {
-		MsgPacket msgPacket = msgBuffer.nextFromQue();
-		sendMessage(msgPacket);
+	public void handleMessage() {
+		//MsgPacket msgPacket;
+		if(msgBuffer.queSize() > 0) {
+			MsgPacket msgPacket = msgBuffer.nextFromQue();
+			sendMessage(msgPacket);
+		}
 	}
 
 	 

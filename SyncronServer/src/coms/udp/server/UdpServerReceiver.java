@@ -1,7 +1,7 @@
 /**
  * 
  */
-package coms.udp;
+package coms.udp.server;
 
 import msg.MsgTimer;
 
@@ -12,6 +12,8 @@ import sync.serial.ArdulinkSerial;
 import coms.MsgPacket;
 import coms.MsgParser;
 import coms.UdpMessenger;
+import coms.udp.AbstractUdpDispatcher;
+import coms.udp.IUdp;
 
 /**
  * @author Dawson
@@ -28,6 +30,7 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 
 	 
 	@Override
+	public
 	void handleMessage() {
 
 		MsgPacket msgPacket = msgBuffer.nextFromQue();
@@ -42,13 +45,13 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 	
 
 		ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
-		if (msgPacket.cmd.equals("digital")) {
+		if (msgPacket.type.equals("digital")) {
 			log.info("INCOMMING MSG OF TYPE:  DIGITAL");
 			msgPacket.setCmd("log");
 			// msgPacket.setCmd("log");
 			sendMessage(msgPacket);
 		}
-		if (msgPacket.cmd == "log") {
+		if (msgPacket.type == "log") {
 			log.info(msgPacket.value);
 		}
 	

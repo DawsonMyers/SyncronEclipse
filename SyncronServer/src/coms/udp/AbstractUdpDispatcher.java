@@ -20,7 +20,7 @@ import coms.UdpMessenger;
 public abstract class AbstractUdpDispatcher implements Runnable {
 
 	public final static Logger					log		= LoggerFactory.getLogger(AbstractUdpDispatcher.class.getName());
-	public static volatile MessageBuffer<MsgPacket>	msgBuffer	= new MessageBuffer<MsgPacket>();
+	public   volatile MessageBuffer<MsgPacket>	msgBuffer	= new MessageBuffer<MsgPacket>();
 
 	/**
 	 * 
@@ -58,10 +58,10 @@ public abstract class AbstractUdpDispatcher implements Runnable {
 		}
 	}
 
-	@Profiled
-	abstract void handleMessage();
+	 
+	public abstract void handleMessage();
 	
-	abstract void sendMessage(MsgPacket msgPacket);
+	public abstract void sendMessage(MsgPacket msgPacket);
 	
 
 }

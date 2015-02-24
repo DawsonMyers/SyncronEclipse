@@ -23,8 +23,10 @@ import sync.serial.ArdulinkSerial;
 import sync.system.SyncUtils;
 
 import com.jcabi.aspects.Loggable;
+
 import coms.ActiveMsg;
 import coms.Client;
+import coms.ComConstants;
 import coms.MessageBuffer;
 import coms.Msg;
 import coms.MsgPacket;
@@ -36,7 +38,7 @@ import coms.UdpMessenger;
  * @author Dawson
  *
  */
-public abstract class AbstractUdpHandler extends Thread  {
+public abstract class AbstractUdpHandler extends Thread implements  ComConstants{
 
 	public final static Logger				log				= LoggerFactory.getLogger(AbstractUdpHandler.class.getName());
 
@@ -95,39 +97,34 @@ public abstract class AbstractUdpHandler extends Thread  {
 		log.info("Starting Handlers");
 		startMsgHandlers();
 	}
-	/*
-	 * (non-Javadoc)
-	 * @see coms.udp.IUdpBufferAccess#getIncomingBuffer()
+	public void processMessage(Map<String, Object> jmap) {
+		log.debug("Extracting data");
+		// protocol = (String) json.get(PROTOCAL);
+		String type = (String) jmap.get(fTYPE).toString();
+		switch (type) {
+			case tDIGITAL:
+				handleDigitalMessage(jmap);
+				break;
+			case tANALOG:
+				handleAnalogMessage(jmap);
+				break;
+			case tADMIN:
+				handleAdminMessage(jmap);
+				break;
+			case tUPDATE:
+				handleUpdateMessage(jmap);
+				break;
+
+			default:
+				break;
+		}
+
+	}
+	/**
+	 * @param jmap
 	 */
-	// @Override
-	// public MessageBuffer<MsgPacket> getIncomingBuffer() {
-	// return h;
-	// }
-	// /* (non-Javadoc)
-	// * @see coms.udp.IUdpBufferAccess#getOutgoingBuffer()
-	// */
-	// @Override
-	// public MessageBuffer<MsgPacket> getOutgoingBuffer() {
-	// return null;
-	// }
-
-	// Msg handler
-	// ///////////////////////////////////////////////////////////////////////////////////
-
-	// public static Thread msgHandlerThread = null;
-	// JSONObject json = null;
-	// UdpServerReceiver incomingHandler;
-	// UdpServerSender
-
-	// public static synchronized void startIncomingHandler() {
-	//
-	// UdpServerReceiver incomingHandler = new UdpServerReceiver();
-	// new Thread(incomingHandler, "IncomingHandler").start();
-	// }
-
-	//
-	// UdpServerReceiver incomingHandler = new UdpServerReceiver();
-	// new Thread(incomingHandler, "IncomingHandler").start();
-	// }
-
-}
+	public abstract void handleDigitalMessage(Map<String, Object> jmap);
+	public abstract void handleAnalogMessage(Map<String, Object> jmap);
+	public abstract void handleAdminMessage(Map<String, Object> jmap);
+	public abstract void handleUpdateMessage(Map<String, Object> jmap);
+	}

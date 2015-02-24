@@ -181,16 +181,16 @@ public class UdpHandler extends Thread {
 				System.out.print("\t\t\t\t\t\t\t\t");
 				timer.print();
 				System.out.println("Received msg contents: \n" + msgPacket.getJsonMsg());// activeMsg.toString());
-				System.out.println(msgPacket.cmd);// activeMsg.toString());
+				System.out.println(msgPacket.type);// activeMsg.toString());
 
 				ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
-				if (msgPacket.cmd.equals("digital")) {
+				if (msgPacket.type.equals("digital")) {
 					log.info("INCOMMING MSG OF TYPE:  DIGITAL");
 					msgPacket.setCmd("log");
 					// msgPacket.setCmd("log");
 					sendMessage(msgPacket);
 				}
-				if (msgPacket.cmd == "log") {
+				if (msgPacket.type == "log") {
 					log.info(msgPacket.value);
 				}
 			}
