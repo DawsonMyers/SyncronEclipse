@@ -53,7 +53,7 @@ public class UdpHandler extends Thread {
 	
 	
 	
-	//	Started in ArdulinkSerial
+	//	Started in ArdulinkSerial 
 	
 //	public static void main(String[] args) {
 //		handler = new UdpHandler();

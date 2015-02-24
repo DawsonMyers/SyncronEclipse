@@ -5,8 +5,6 @@ package coms;
 
 // import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-import org.apache.commons.lang3.builder.*;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,6 +15,9 @@ import java.net.UnknownHostException;
 import org.json.simple.JSONObject;
 
 import sync.system.SyncUtils;
+
+import coms.udp.AbstractUdpHandler;
+import coms.udp.IUdpBufferAccess;
 
 /**
  * @author Dawson
@@ -36,14 +37,19 @@ public class UdpMessenger implements Runnable, ComConstants {
 	public static int			portUdp			= 10000;
 	public static int			portSend			= 10005;
 	public static int			count			= 0;
+	public static MessageBuffer<MsgPacket>		incomingBuffer		= null;
+	public static MessageBuffer<MsgPacket>		outgoingBuffer		= null;
+	AbstractUdpHandler			handlerBuffers		= null;
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	
-	
-	public UdpMessenger() {
+	public UdpMessenger() {}
 
+	public UdpMessenger(AbstractUdpHandler ioBuffers) {
+	handlerBuffers = ioBuffers;
+	incomingBuffer = ioBuffers.getIncomingBuffer();
+	outgoingBuffer = ioBuffers.getOutgoingBuffer();
 	}
 
 	// son = (JSONObject)new JSONParser().parse(jason);
@@ -89,9 +95,9 @@ public class UdpMessenger implements Runnable, ComConstants {
 		// byte[] buf = UdpBuffer.clone();
 		sendThread = new Thread("UdpSender") {
 			public void run() {
-				Client c = p.getClient();
+				//Client c = p.getClient();
 				try (DatagramSocket udpSocket = new DatagramSocket()) {
-				  
+
 					byte[] buf = p.getJsonMsg().getBytes();
 
 					// DatagramPacket packet = new DatagramPacket(buf,
@@ -161,9 +167,10 @@ public class UdpMessenger implements Runnable, ComConstants {
 						// System.out.println(packet.getSocketAddress());
 
 						// UdpHandler.incomingMsgBufferPACKET.addToQue(msg);
-						UdpHandler.incomingMsgBufferPACKET.addToQue(msgPacket);
+						incomingBuffer.addToQue(msgPacket);
+//						UdpHandler.incomingMsgBufferPACKET.addToQue(msgPacket);
 
-						System.out.println("msg pulled from list = " + (UdpHandler.incomingMsgBufferPACKET.queSize()));
+						System.out.println("msg pulled from list = " + ( incomingBuffer.queSize()));
 
 						// sockListener.close();
 					}

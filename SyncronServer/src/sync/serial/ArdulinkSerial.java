@@ -11,7 +11,7 @@ import org.zu.ardulink.event.ConnectionListener;
 import org.zu.ardulink.event.DisconnectionEvent;
 
 import coms.UdpHandler;
-
+import coms.udp.UdpServerHandler;
 import sync.controller.ServerController;
 
 /**
@@ -43,9 +43,12 @@ public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.ge
 public static ArdulinkSerial aSerial = new ArdulinkSerial();
 
 public static UdpHandler udpHandler = null;
+public static UdpServerHandler udpServerHandler = null;
 	public static void main(String[] args) {
 
-		udpHandler = new UdpHandler();
+		udpServerHandler = new UdpServerHandler();
+		udpServerHandler.start();
+		//udpHandler = new UdpHandler();
 		//udpHandler.start();
 		  link = Link.getDefaultInstance();
 

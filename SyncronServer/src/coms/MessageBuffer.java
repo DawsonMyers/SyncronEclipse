@@ -47,7 +47,7 @@ public class MessageBuffer<Message> {
 		return size;
 	}
 
-	boolean queEmpty() {
+	public boolean queEmpty() {
 		return queSize() == 0;
 	}
 }
