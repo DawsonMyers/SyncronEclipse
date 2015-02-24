@@ -24,7 +24,7 @@ import coms.udp.IUdp;
  */
 public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 
-	//AbstractUdpHandler			mHandler	= null;
+	// AbstractUdpHandler mHandler = null;
 	public final static Logger	log		= LoggerFactory.getLogger(UdpServerReceiver.class.getName());
 	public static MsgTimer		timer	= new MsgTimer();
 
@@ -32,7 +32,7 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 
 	public UdpServerReceiver(AbstractUdpHandler handler) {
 		super(handler);
-		//mHandler = handler;
+		// mHandler = handler;
 	}
 
 	@Override
@@ -40,24 +40,25 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 
 		MsgPacket msgPacket = msgBuffer.nextFromQue();
 		msgPacket.addNewClient();
-
-		Map<String, Object> jMap = MsgParser.parseMsg(msgPacket);
-		udpHandler.processMessage(jMap);
+		msgPacket.setHandler(udpHandler);
+		msgPacket.getjMap();
+		// Map<String, Object> jMap = MsgParser.parseMsg(msgPacket);
+		udpHandler.processMessage(msgPacket);
 		// Parse and extract msg data
 
 		timer.finish();
 		timer.print();
-//
-//		ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
-//		if (msgPacket.type.equals("digital")) {
-//			log.info("INCOMMING MSG OF TYPE:  DIGITAL");
-//			msgPacket.setCmd("log");
-//			// msgPacket.setCmd("log");
-//			sendMessage(msgPacket);
-//		}
-//		if (msgPacket.type == "log") {
-//			log.info(msgPacket.value);
-//		}
+		//
+		// ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
+		// if (msgPacket.type.equals("digital")) {
+		// log.info("INCOMMING MSG OF TYPE:  DIGITAL");
+		// msgPacket.setCmd("log");
+		// // msgPacket.setCmd("log");
+		// sendMessage(msgPacket);
+		// }
+		// if (msgPacket.type == "log") {
+		// log.info(msgPacket.value);
+		// }
 
 	}
 

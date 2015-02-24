@@ -38,14 +38,16 @@ import coms.UdpMessenger;
  * @author Dawson
  *
  */
-public abstract class AbstractUdpHandler extends Thread implements  ComConstants{
+public abstract class AbstractUdpHandler extends Thread implements ComConstants {
 
-	public final static Logger				log				= LoggerFactory.getLogger(AbstractUdpHandler.class.getName());
+	public final static Logger				log					= LoggerFactory.getLogger(AbstractUdpHandler.class.getName());
 
-	public static int						counter			= 0;
-	public static MsgTimer					timer			= new MsgTimer();
-	public static volatile Map<String, Client>	connectedClients	= new HashMap<>();
-	public static volatile LinkedList<Msg>		MessageQue		= new LinkedList<>();
+	public static int						counter				= 0;
+	public static MsgTimer					timer				= new MsgTimer();
+	public static volatile Map<String, Client>	connectedClients		= new HashMap<>();
+	public static volatile Map<String, Client>	connectedNodeClients	= new HashMap<>();
+	public static volatile Map<String, Client>	connectedAndroidClients	= new HashMap<>();
+	public static volatile LinkedList<Msg>		MessageQue			= new LinkedList<>();
 
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new
 	// MessageBuffer<Msg>();
@@ -75,10 +77,6 @@ public abstract class AbstractUdpHandler extends Thread implements  ComConstants
 
 	public abstract void handleOutgoingMessage(MsgPacket msg);
 
-	@Override
-	public String toString() {
-		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
@@ -97,36 +95,72 @@ public abstract class AbstractUdpHandler extends Thread implements  ComConstants
 		log.info("Starting Handlers");
 		startMsgHandlers();
 	}
-	public void processMessage(Map<String, Object> jmap) {
+
+	public void processMessage(MsgPacket msgPacket) {
 		log.debug("Extracting data");
 		// protocol = (String) json.get(PROTOCAL);
-		String type = (String) jmap.get(fTYPE).toString();
+		
+		Map<String, Object> jMap = msgPacket.getjMap();
+ 
+		String type =   msgPacket.getType();
 		switch (type) {
 			case tDIGITAL:
-				handleDigitalMessage(jmap);
+				handleDigitalMessage(msgPacket);
 				break;
 			case tANALOG:
-				handleAnalogMessage(jmap);
+				handleAnalogMessage(msgPacket);
 				break;
 			case tADMIN:
-				handleAdminMessage(jmap);
+				handleAdminMessage(msgPacket);
 				break;
 			case tUPDATE:
-				handleUpdateMessage(jmap);
+				handleUpdateMessage(msgPacket);
+				break;
+			case tREGISTER:
+				handleRegisterMessage(msgPacket);
+				break;
+			case tSTATUS:
+				handleStatusMessage(msgPacket);
+				break;
+			case tLOGIN:
+				handleLoginMessage(msgPacket);
+				break;
+			case tUSER:
+				handleUserMessage(msgPacket);
 				break;
 
 			default:
+				log.error("message could not be identified");
 				break;
 		}
 
 	}
+
 	/**
-	 * Abstract callback methods that are triggered whenever the corresponding message type is received.
-	 * The methods must be implemented differently according to whether it is being run on the node, server, or android
-	 * @param jmap
-	 */	
-	public abstract void handleDigitalMessage(Map<String, Object> jmap);
-	public abstract void handleAnalogMessage(Map<String, Object> jmap);
-	public abstract void handleAdminMessage(Map<String, Object> jmap);
-	public abstract void handleUpdateMessage(Map<String, Object> jmap);
+	 * Abstract callback methods that are triggered whenever the corresponding
+	 * message type is received. The methods must be implemented differently
+	 * according to whether it is being run on the node, server, or android
+	 * 
+	 * @param msgPacket
+	 */
+	public abstract void handleDigitalMessage(MsgPacket msgPacket);
+
+	public abstract void handleAnalogMessage(MsgPacket msgPacket);
+
+	public abstract void handleAdminMessage(MsgPacket msgPacket);
+
+	public abstract void handleUpdateMessage(MsgPacket msgPacket);
+
+	public abstract void handleRegisterMessage(MsgPacket msgPacket);
+
+	public abstract void handleStatusMessage(MsgPacket msgPacket);
+
+	public abstract void handleLoginMessage(MsgPacket msgPacket);
+
+	public abstract void handleUserMessage(MsgPacket msgPacket);
+	
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
+}

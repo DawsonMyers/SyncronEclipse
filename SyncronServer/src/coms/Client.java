@@ -14,31 +14,40 @@ import java.util.Date;
  */
 public class Client {
 
-	public InetAddress		ip = null;
-	public int				port = 0;
-	public String			id = "";
-	public String				mDeviceId		= "";
-	public int				sendCount		= 0;
-	public int				receiveCount	= 0;
-	public Date				dateAdded = null;
-	public DatagramPacket	mPacket = null;				// = new
-													// DatagramPacket(UdpBuffer,
-													// UdpBuffer.length,
-													// receiverAddress,
-													// udpPort);
-	public SocketAddress	address = null;
+	public InetAddress		ip			= null;
+	public int			port			= 0;
+	public String			id			= "";
+	public String			mDeviceId		= "";
+	public int			sendCount		= 0;
+	public int			receiveCount	= 0;
+	public Date			dateAdded		= null;
+	public DatagramPacket	mPacket		= null;
+	public long			lastActiveTime	= System.currentTimeMillis();
+	public MsgPacket		mMsgPacket	= null;
+
+	public String			mNetworkId	= "";
+	public String			mClientId		= "";
+	// = new
+	// DatagramPacket(UdpBuffer,
+	// UdpBuffer.length,
+	// receiverAddress,
+	// udpPort);
+	public SocketAddress	address		= null;
 
 	/**
 	 * 
 	 */
 	public Client() {}
 
-	public Client(DatagramPacket packet) { //, String id) {
-		mPacket = packet;
-		this.id = packet.getSocketAddress().toString();
+	public Client(MsgPacket msgPacket) { // , String id) {
+		mMsgPacket = msgPacket;
+		mPacket = mMsgPacket.getDp();
+		this.id = mPacket.getSocketAddress().toString();
 		port = mPacket.getPort();
 		ip = mPacket.getAddress();
 		address = mPacket.getSocketAddress();
+		mNetworkId =mPacket.getSocketAddress().toString();
+		
 		setId();
 		if (!UdpHandler.connectedClients.containsKey(getId())) {
 			UdpHandler.connectedClients.put(getId(), this);
@@ -50,6 +59,21 @@ public class Client {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * @return object lastActiveTime of type long
+	 */
+	public long getLastActiveTime() {
+		return this.lastActiveTime;
+	}
+
+	/**
+	 * @param lastActiveTime
+	 *             the lastActiveTime to set
+	 */
+	public void setLastActiveTime() {
+		this.lastActiveTime = System.currentTimeMillis();
+	}
+
+	/**
 	 * @return object address of type SocketAddress
 	 */
 	public SocketAddress getAddress() {
@@ -58,7 +82,7 @@ public class Client {
 
 	/**
 	 * @param address
-	 *            the address to set
+	 *             the address to set
 	 */
 	public void setAddress(SocketAddress address) {
 		this.address = address;
@@ -73,7 +97,7 @@ public class Client {
 
 	/**
 	 * @param port
-	 *            the port to set
+	 *             the port to set
 	 */
 	public void setPort(int port) {
 		this.port = port;
@@ -87,7 +111,6 @@ public class Client {
 		receiveCount++;
 	}
 
-
 	/**
 	 * @return object ip of type InetAddress
 	 */
@@ -97,7 +120,7 @@ public class Client {
 
 	/**
 	 * @param ip
-	 *            the ip to set
+	 *             the ip to set
 	 */
 	public void setIp(InetAddress ip) {
 		this.ip = ip;
@@ -112,11 +135,12 @@ public class Client {
 
 	/**
 	 * @param id
-	 *            the id to set
+	 *             the id to set
 	 */
 	public void setId() {
-		id = (ip.getHostAddress().toString().replace("/", "") + ":" + port);
-		
+		//id = (ip.getHostAddress().toString().replace("/", "") + "_" + port);
+		id = (mMsgPacket.getSenderType() + getAddress());
+
 	}
 
 	/**
@@ -128,7 +152,7 @@ public class Client {
 
 	/**
 	 * @param deviceId
-	 *            the deviceId to set
+	 *             the deviceId to set
 	 */
 	public void setDeviceId(String deviceId) {
 		this.mDeviceId = deviceId;
@@ -143,7 +167,7 @@ public class Client {
 
 	/**
 	 * @param sendCount
-	 *            the sendCount to set
+	 *             the sendCount to set
 	 */
 	public void setSendCount(int sendCount) {
 		this.sendCount = sendCount;
@@ -158,7 +182,7 @@ public class Client {
 
 	/**
 	 * @param receiveCount
-	 *            the receiveCount to set
+	 *             the receiveCount to set
 	 */
 	public void setReceiveCount(int receiveCount) {
 		this.receiveCount = receiveCount;
@@ -173,11 +197,10 @@ public class Client {
 
 	/**
 	 * @param dateAdded
-	 *            the dateAdded to set
+	 *             the dateAdded to set
 	 */
 	public void setDateAdded(Date dateAdded) {
 		this.dateAdded = dateAdded;
 	}
-
 
 }

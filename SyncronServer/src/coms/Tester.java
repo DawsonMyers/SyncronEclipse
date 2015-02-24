@@ -75,7 +75,7 @@ public class Tester implements ComConstants {
 		System.out.println("Num of bytes = " + json.getBytes().length);
 
 		DatagramPacket dp = new DatagramPacket(b, b.length, ipAddress, udp_Port);
-		c = new Client(dp);
+		//c = new Client(dp);
 
 		MsgPacket msgPacket = new MsgPacket(c, json, dp);
 

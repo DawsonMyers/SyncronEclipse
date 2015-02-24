@@ -52,24 +52,48 @@ public class UdpServerHandler extends AbstractUdpHandler {
 		return outgoingHandler.msgBuffer;
 	}
 
+	//	Message received callbacks
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	
 	@Override
-	public void handleDigitalMessage(Map<String, Object> jmap) {
-		System.out.println("ABSTRACT === handleDigitalMessage");
+	public void handleDigitalMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleDigitalMessage");
 	}
 
 	@Override
-	public void handleAnalogMessage(Map<String, Object> jmap) {
-		System.out.println("ABSTRACT === handleAnalogMessage");
+	public void handleAnalogMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleAnalogMessage");
 	}
 
 	@Override
-	public void handleAdminMessage(Map<String, Object> jmap) {
-		System.out.println("ABSTRACT === handleAdminMessage");
+	public void handleAdminMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleAdminMessage");
 	}
 
 	@Override
-	public void handleUpdateMessage(Map<String, Object> jmap) {
-		System.out.println("ABSTRACT === handleUpdateMessage");
+	public void handleUpdateMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleUpdateMessage");
+	}
+
+	@Override
+	public void handleRegisterMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleRegisterMessage");
+	}
+
+	@Override
+	public void handleStatusMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleStatusMessage");
+	}
+
+	@Override
+	public void handleLoginMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleLoginMessage");
+	}
+
+	@Override
+	public void handleUserMessage(MsgPacket msgPacket) {
+		System.out.println("UdpServerHandler::handleUserMessage");
 	}
 
 }

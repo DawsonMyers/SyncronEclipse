@@ -49,13 +49,22 @@ public interface ComConstants {
 	public static String		HTTP_SERVER			= "http://dawsonmyers.ca";
 	public static final int		PORT_SERVER			= 6005;
 
-	// message fields
+	// /////////////// message fields
+	// meta data - every msg has these fields
 	public String				fPROTOCOL				= "protocol";
-	public String				fTYPE				= "type";
-	public String				fTARGET_ID			= "target";
-	public String				fPIN					= "pin";
-	public String				fVALUE				= "value";
+	public String				fTYPE				= "message_type";
+	public String				fTARGET_ID			= "target_id";
+	public String				fADMIN_ID				= "admin_id";
+	public String				fSENDER_ID			= "sender_id";
+	public String				fSENDER_TYPE			= "sender_type";
+	public String				fMESSAGE_ID			= "message_id";
+	public String				fMESSAGE_TYPE			= "message_type";
+	public String				fDATA_ID				= "data_id";
 	public String				fID					= "id";
+	public String				fREQUIRE_ACK			= "require_ack";
+
+	public String				fVALUE				= "value";
+	public String				fPIN					= "pin";
 	public String				fDATA				= "data";
 
 	// Message types
@@ -68,4 +77,6 @@ public interface ComConstants {
 	public String				tLOGIN				= "login";
 	public String				tUSER				= "user";
 
+	public String				msgTRUE				= "1";
+	public String				msgFAULSE				= "0";
 }
