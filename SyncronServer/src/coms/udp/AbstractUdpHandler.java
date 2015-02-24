@@ -32,6 +32,7 @@ import coms.Msg;
 import coms.MsgPacket;
 import coms.MsgParser;
 import coms.Tester;
+import coms.UdpHandler;
 import coms.UdpMessenger;
 
 /**
@@ -44,11 +45,12 @@ public abstract class AbstractUdpHandler extends Thread implements ComConstants 
 
 	public static int						counter				= 0;
 	public static MsgTimer					timer				= new MsgTimer();
-	public static volatile Map<String, Client>	connectedClients		= new HashMap<>();
+	public static volatile Map<String, Client>	connectedClients		= UdpHandler.connectedClients;							// new
+																												// HashMap<>();
 	public static volatile Map<String, Client>	connectedNodeClients	= new HashMap<>();
 	public static volatile Map<String, Client>	connectedAndroidClients	= new HashMap<>();
 	public static volatile LinkedList<Msg>		MessageQue			= new LinkedList<>();
-
+	public Map<String, Object>				implementedMap			= null;
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new
 	// MessageBuffer<Msg>();
 	// public static volatile MessageBuffer<MsgPacket> incomingMsgBufferPACKET
@@ -77,6 +79,7 @@ public abstract class AbstractUdpHandler extends Thread implements ComConstants 
 
 	public abstract void handleOutgoingMessage(MsgPacket msg);
 
+	public abstract void sendMessage(MsgPacket msg);
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
@@ -93,16 +96,16 @@ public abstract class AbstractUdpHandler extends Thread implements ComConstants 
 		udpMessengerThrd.start();
 
 		log.info("Starting Handlers");
-		startMsgHandlers();
+		// startMsgHandlers();
 	}
 
 	public void processMessage(MsgPacket msgPacket) {
 		log.debug("Extracting data");
 		// protocol = (String) json.get(PROTOCAL);
-		
-		Map<String, Object> jMap = msgPacket.getjMap();
- 
-		String type =   msgPacket.getType();
+
+		// Map<String, Object> jMap = msgPacket.getjMap();
+
+		String type = msgPacket.getType();
 		switch (type) {
 			case tDIGITAL:
 				handleDigitalMessage(msgPacket);
@@ -158,7 +161,8 @@ public abstract class AbstractUdpHandler extends Thread implements ComConstants 
 	public abstract void handleLoginMessage(MsgPacket msgPacket);
 
 	public abstract void handleUserMessage(MsgPacket msgPacket);
-	
+	public abstract void implementedMapConfig();
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);

@@ -39,9 +39,9 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 	public void handleMessage() {
 
 		MsgPacket msgPacket = msgBuffer.nextFromQue();
-		msgPacket.addNewClient();
+		//msgPacket.addNewClient();
 		msgPacket.setHandler(udpHandler);
-		msgPacket.getjMap();
+		//msgPacket.getjMap();
 		// Map<String, Object> jMap = MsgParser.parseMsg(msgPacket);
 		udpHandler.processMessage(msgPacket);
 		// Parse and extract msg data

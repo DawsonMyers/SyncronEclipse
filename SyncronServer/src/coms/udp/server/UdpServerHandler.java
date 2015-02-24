@@ -3,6 +3,7 @@
  */
 package coms.udp.server;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -22,13 +23,14 @@ public class UdpServerHandler extends AbstractUdpHandler {
 	UdpServerReceiver			incomingHandler;
 	UdpServerSender			outgoingHandler;
 
-	public UdpServerHandler() {
+	public   UdpServerHandler() {
+		//	handlers started in super
 		startMsgHandlers();
 
 	}
 
 	@Override
-	public void startMsgHandlers() {
+	public synchronized void startMsgHandlers() {
 		incomingHandler = new UdpServerReceiver(this);
 		new Thread(incomingHandler, "IncomingUdpHandler").start();
 
@@ -58,6 +60,17 @@ public class UdpServerHandler extends AbstractUdpHandler {
 	
 	@Override
 	public void handleDigitalMessage(MsgPacket msgPacket) {
+		System.out.println(connectedClients.size());
+		for(String id: connectedClients.keySet()) {
+			System.out.println("Connected Client:  " + id);
+		if (id.contains("node")) {
+			msgPacket.setClient(connectedClients.get(id));
+			log.error("Sending digital msg to node");
+			System.out.println(msgPacket.getClientId());
+			sendMessage(msgPacket);
+		}
+		}
+		
 		System.out.println("UdpServerHandler::handleDigitalMessage");
 	}
 
@@ -69,6 +82,7 @@ public class UdpServerHandler extends AbstractUdpHandler {
 	@Override
 	public void handleAdminMessage(MsgPacket msgPacket) {
 		System.out.println("UdpServerHandler::handleAdminMessage");
+		System.exit(0);
 	}
 
 	@Override
@@ -94,6 +108,17 @@ public class UdpServerHandler extends AbstractUdpHandler {
 	@Override
 	public void handleUserMessage(MsgPacket msgPacket) {
 		System.out.println("UdpServerHandler::handleUserMessage");
+	}
+
+	@Override
+	public void sendMessage(MsgPacket msg) {
+		outgoingHandler.sendMessage(msg);
+	}
+
+	@Override
+	public void implementedMapConfig() {
+		//implementedMap.put(fTYPE, "add type");
+		implementedMap.put(fSENDER_TYPE, vSERVER);
 	}
 
 }

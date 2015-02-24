@@ -77,6 +77,11 @@ public interface ComConstants {
 	public String				tLOGIN				= "login";
 	public String				tUSER				= "user";
 
+	
+	public String				vSERVER				= "server";
+	public String				vANDROID				= "android";
+	public String				vNODE				= "node";
+	
 	public String				msgTRUE				= "1";
 	public String				msgFAULSE				= "0";
 }

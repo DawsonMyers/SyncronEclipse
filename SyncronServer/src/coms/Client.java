@@ -49,8 +49,11 @@ public class Client {
 		mNetworkId =mPacket.getSocketAddress().toString();
 		
 		setId();
+		System.out.println("Id to add = " + mClientId);
+		
 		if (!UdpHandler.connectedClients.containsKey(getId())) {
 			UdpHandler.connectedClients.put(getId(), this);
+			System.out.println("id added");
 		}
 
 	}
@@ -140,6 +143,9 @@ public class Client {
 	public void setId() {
 		//id = (ip.getHostAddress().toString().replace("/", "") + "_" + port);
 		id = (mMsgPacket.getSenderType() + getAddress());
+		mClientId = id;
+		System.out.println(mClientId);
+				
 
 	}
 
@@ -201,6 +207,18 @@ public class Client {
 	 */
 	public void setDateAdded(Date dateAdded) {
 		this.dateAdded = dateAdded;
+	}
+
+	/**
+	 * 
+	 */
+	public void init(MsgPacket msgPacket) {
+		
+		mMsgPacket = msgPacket;
+		mMsgPacket.setDp(mPacket);
+		mMsgPacket.setClientId(mClientId);
+		System.out.println(mClientId);
+		
 	}
 
 }

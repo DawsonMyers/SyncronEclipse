@@ -34,9 +34,9 @@ public class MsgMetaData implements ComConstants {
 	public String				value		= "";
 	public String				adminId		= "";
 
-	public String				networkId	= "";
-	public String				clientId	= "";
-	
+	public String				networkId		= "";
+	public String				clientId		= "";
+
 	public MsgMetaData() {}
 
 	public MsgMetaData(Map<String, Object> jMap) {
@@ -52,7 +52,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param jMap the jMap to set
+	 * @param jMap
+	 *             the jMap to set
 	 */
 	public void setjMap(Map<String, Object> jMap) {
 		this.jMap = jMap;
@@ -79,12 +80,12 @@ public class MsgMetaData implements ComConstants {
 		if (jMap.containsKey(field)) {
 			return (String) jMap.get(field);
 		} else {
-			log.error("Message field: " + field + " does not exist in received message");
+			//log.error("Message field: " + field + " does not exist in received message");
 			return "ERROR";
 		}
 	}
 
-	//	Message field setters/getters
+	// Message field setters/getters
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -95,7 +96,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param protocol the protocol to set
+	 * @param protocol
+	 *             the protocol to set
 	 */
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
@@ -109,7 +111,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *             the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -123,7 +126,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param targetId the targetId to set
+	 * @param targetId
+	 *             the targetId to set
 	 */
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
@@ -137,7 +141,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param senderId the senderId to set
+	 * @param senderId
+	 *             the senderId to set
 	 */
 	public void setSenderId(String senderId) {
 		this.senderId = senderId;
@@ -151,7 +156,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param senderType the senderType to set
+	 * @param senderType
+	 *             the senderType to set
 	 */
 	public void setSenderType(String senderType) {
 		this.senderType = senderType;
@@ -165,7 +171,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param messageId the messageId to set
+	 * @param messageId
+	 *             the messageId to set
 	 */
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
@@ -179,7 +186,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param dataId the dataId to set
+	 * @param dataId
+	 *             the dataId to set
 	 */
 	public void setDataId(String dataId) {
 		this.dataId = dataId;
@@ -193,11 +201,13 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param adminId the adminId to set
+	 * @param adminId
+	 *             the adminId to set
 	 */
 	public void setAdminId(String adminId) {
 		this.adminId = adminId;
 	}
+
 	/**
 	 * @return object networkId of type String
 	 */
@@ -206,7 +216,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param networkId the networkId to set
+	 * @param networkId
+	 *             the networkId to set
 	 */
 	public void setNetworkId(String networkId) {
 		this.networkId = networkId;
@@ -220,7 +231,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param clientId the clientId to set
+	 * @param clientId
+	 *             the clientId to set
 	 */
 	public void setClientId(String clientId) {
 		this.clientId = clientId;

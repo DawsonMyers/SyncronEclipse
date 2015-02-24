@@ -3,6 +3,8 @@ package sync.main;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import coms.udp.server.UdpServerHandler;
+
 import msg.MessageServerThread;
 import sync.controller.ServerController;
 import sync.sock.server.ServerThread;
@@ -11,13 +13,15 @@ import sync.sock.server.UDPServerThread;
 public class RunServer {
 	static// server;
 	long							dateStarted;
-	static long						dateNow;
+	static long					dateNow;
 	public static int				UdpBufferLength	= 49;
-	public static byte[]			UdpBuffer		= new byte[UdpBufferLength];
+	public static byte[]			UdpBuffer			= new byte[UdpBufferLength];
 	Date							dateLast;
 	Date							date;
 	ServerController				controller		= ServerController.getInstance();
 	private static SimpleDateFormat	sdf;
+
+	public static UdpServerHandler	udpServerHandler	= null;
 
 	RunServer() {
 
@@ -38,7 +42,6 @@ public class RunServer {
 			StartServer();
 		}
 
-
 	}
 
 	synchronized static void StartServer() {
@@ -51,31 +54,33 @@ public class RunServer {
 	// Thread.sleep(100);
 	// }
 
-
 	synchronized static void waitForServerQuit() {
 		try {
+
+			udpServerHandler = new UdpServerHandler();
+			udpServerHandler.start();
+
 			MessageServerThread msgServer = null;
 			try {
-				  msgServer = new MessageServerThread();
+				msgServer = new MessageServerThread();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("[ERROR - " + (new SimpleDateFormat("HH:mm:ss")).format(new Date()) + "] -> [RunServer::waitForServerQuit]TYPE = Exception | VAR = e");
 			}
 
 			try {
-				UDPServerThread udpThread = new UDPServerThread(UdpBuffer);
-				udpThread.start();
+//				UDPServerThread udpThread = new UDPServerThread(UdpBuffer);
+//				udpThread.start();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("[ERROR - " + (new SimpleDateFormat("HH:mm:ss")).format(new Date()) + "] -> [RunServer::waitForServerQuit]TYPE = Exception | VAR = e");
 			}
 
-
-			//ServerThread server = new ServerThread(6005);
+			// ServerThread server = new ServerThread(6005);
 			// ServerThread.start
 
 			synchronized (msgServer) {
-				//Thread.sleep(100);
+				// Thread.sleep(100);
 				msgServer.wait();
 			}
 		} catch (InterruptedException e) {
