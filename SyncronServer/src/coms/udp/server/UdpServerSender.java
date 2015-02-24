@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import coms.MsgPacket;
 import coms.UdpMessenger;
 import coms.udp.AbstractUdpDispatcher;
+import coms.udp.AbstractUdpHandler;
 import coms.udp.IUdp;
 
 /**
@@ -22,8 +23,9 @@ public class UdpServerSender extends AbstractUdpDispatcher implements IUdp {
 	public final static Logger	log		= LoggerFactory.getLogger(UdpServerSender.class.getName());
 	public static MsgTimer		timer	= new MsgTimer();
 
-	public UdpServerSender() {
-
+	public UdpServerSender() {}
+	public UdpServerSender(AbstractUdpHandler handler) {
+		super(handler);
 	}
 
 	@Override

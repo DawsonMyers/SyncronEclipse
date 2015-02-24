@@ -26,7 +26,7 @@ public class MsgPacket implements ComConstants {
 	private Client				mClient	= null;										;
 
 	private String				mJsonMsg	= "";
-	Map<String, String>			jMap		= null;
+	public Map<String, Object>	jMap		= null;
 
 	public String				protocol	= "";
 	public String				type		= "";
@@ -164,6 +164,23 @@ public class MsgPacket implements ComConstants {
 
 	// Member setter/getter
 	// ///////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @return object jMap of type Map<String,Object>
+	 */
+	public Map<String, Object> getjMap() {
+		if (mJsonMsg != null) {
+			jMap = MsgParser.parseMsg(this);
+		}
+		return this.jMap;
+	}
+
+	/**
+	 * @param jMap the jMap to set
+	 */
+	public void setjMap(Map<String, Object> jMap) {
+		this.jMap = jMap;
+	}
 
 	/**
 	 * @return object jasonMsg of type String

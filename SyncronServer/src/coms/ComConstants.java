@@ -55,7 +55,7 @@ public interface ComConstants {
 	public String				fTARGET_ID			= "target";
 	public String				fPIN					= "pin";
 	public String				fVALUE				= "value";
-	public String				ID					= "id";
+	public String				fID					= "id";
 	public String				fDATA				= "data";
 
 	// Message types
@@ -63,5 +63,9 @@ public interface ComConstants {
 	public String				tANALOG				= "analog";
 	public String				tADMIN				= "admin";
 	public String				tUPDATE				= "update";
+	public String				tREGISTER				= "register";
+	public String				tSTATUS				= "status";
+	public String				tLOGIN				= "login";
+	public String				tUSER				= "user";
 
 }

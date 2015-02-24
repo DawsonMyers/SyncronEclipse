@@ -121,8 +121,10 @@ public abstract class AbstractUdpHandler extends Thread implements  ComConstants
 
 	}
 	/**
+	 * Abstract callback methods that are triggered whenever the corresponding message type is received.
+	 * The methods must be implemented differently according to whether it is being run on the node, server, or android
 	 * @param jmap
-	 */
+	 */	
 	public abstract void handleDigitalMessage(Map<String, Object> jmap);
 	public abstract void handleAnalogMessage(Map<String, Object> jmap);
 	public abstract void handleAdminMessage(Map<String, Object> jmap);

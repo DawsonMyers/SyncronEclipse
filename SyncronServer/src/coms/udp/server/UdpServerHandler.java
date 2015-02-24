@@ -27,17 +27,15 @@ public class UdpServerHandler extends AbstractUdpHandler {
 
 	}
 
-
 	@Override
 	public void startMsgHandlers() {
-		incomingHandler = new UdpServerReceiver();
+		incomingHandler = new UdpServerReceiver(this);
 		new Thread(incomingHandler, "IncomingUdpHandler").start();
 
-		outgoingHandler = new UdpServerSender();
+		outgoingHandler = new UdpServerSender(this);
 		new Thread(outgoingHandler, "OutgoingUdpHandler").start();
 	}
 
-	
 	@Override
 	public void handleIncomingMessage(MsgPacket msg) {}
 
@@ -54,22 +52,24 @@ public class UdpServerHandler extends AbstractUdpHandler {
 		return outgoingHandler.msgBuffer;
 	}
 
+	@Override
+	public void handleDigitalMessage(Map<String, Object> jmap) {
+		System.out.println("ABSTRACT === handleDigitalMessage");
+	}
 
 	@Override
-	public void handleDigitalMessage(Map<String, Object> jmap) {}
-
-
-
-	@Override
-	public void handleAnalogMessage(Map<String, Object> jmap) {}
-
-
-	
-	@Override
-	public void handleAdminMessage(Map<String, Object> jmap) {}
-
+	public void handleAnalogMessage(Map<String, Object> jmap) {
+		System.out.println("ABSTRACT === handleAnalogMessage");
+	}
 
 	@Override
-	public void handleUpdateMessage(Map<String, Object> jmap) {}
+	public void handleAdminMessage(Map<String, Object> jmap) {
+		System.out.println("ABSTRACT === handleAdminMessage");
+	}
+
+	@Override
+	public void handleUpdateMessage(Map<String, Object> jmap) {
+		System.out.println("ABSTRACT === handleUpdateMessage");
+	}
 
 }

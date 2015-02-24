@@ -30,13 +30,13 @@ public final static Logger log = LoggerFactory.getLogger(MsgParser.class.getName
 	 */
 	public MsgParser() {}
 	@Profiled
-	public static JSONObject parseMsg(MsgPacket msgPacket) {
+	public static Map<String,Object> parseMsg(MsgPacket msgPacket) {
 		 //JSONSerializer parser = new JSONSerializer();
 		String jsonString = msgPacket.getJsonMsg();
 		log.info("Parsing JSON string");
 		 JsonParserFactory factory=JsonParserFactory.getInstance();
 		 JSONParser parser = factory.newJsonParser();
-		 Map<String,Object> jsonData = parser.parseJson(jsonString);
+		 Map<String,Object> jMap = parser.parseJson(jsonString);
 		 
 		 //Map<String,String> jsonData = parser.parseJson(jsonString);
 
@@ -50,8 +50,8 @@ public final static Logger log = LoggerFactory.getLogger(MsgParser.class.getName
 //		}
 		
 		// extract data from json obj
-		msgPacket.extractJsonData(jsonData);
-		return json;
+		//msgPacket.extractJsonData(jMap);
+		return jMap;
 
 	}
 

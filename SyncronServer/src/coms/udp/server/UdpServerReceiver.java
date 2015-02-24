@@ -3,6 +3,8 @@
  */
 package coms.udp.server;
 
+import java.util.Map;
+
 import msg.MsgTimer;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import coms.MsgPacket;
 import coms.MsgParser;
 import coms.UdpMessenger;
 import coms.udp.AbstractUdpDispatcher;
+import coms.udp.AbstractUdpHandler;
 import coms.udp.IUdp;
 
 /**
@@ -20,45 +23,46 @@ import coms.udp.IUdp;
  *
  */
 public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
-	
-	public final static Logger	log	= LoggerFactory.getLogger(UdpServerReceiver.class.getName());
-	public static MsgTimer						timer				= new MsgTimer();
 
-	public UdpServerReceiver() {
+	//AbstractUdpHandler			mHandler	= null;
+	public final static Logger	log		= LoggerFactory.getLogger(UdpServerReceiver.class.getName());
+	public static MsgTimer		timer	= new MsgTimer();
 
+	public UdpServerReceiver() {}
+
+	public UdpServerReceiver(AbstractUdpHandler handler) {
+		super(handler);
+		//mHandler = handler;
 	}
 
-	 
 	@Override
-	public
-	void handleMessage() {
+	public void handleMessage() {
 
 		MsgPacket msgPacket = msgBuffer.nextFromQue();
 		msgPacket.addNewClient();
-		
 
+		Map<String, Object> jMap = MsgParser.parseMsg(msgPacket);
+		udpHandler.processMessage(jMap);
 		// Parse and extract msg data
-		MsgParser.parseMsg(msgPacket);
 
 		timer.finish();
 		timer.print();
-	
+//
+//		ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
+//		if (msgPacket.type.equals("digital")) {
+//			log.info("INCOMMING MSG OF TYPE:  DIGITAL");
+//			msgPacket.setCmd("log");
+//			// msgPacket.setCmd("log");
+//			sendMessage(msgPacket);
+//		}
+//		if (msgPacket.type == "log") {
+//			log.info(msgPacket.value);
+//		}
 
-		ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
-		if (msgPacket.type.equals("digital")) {
-			log.info("INCOMMING MSG OF TYPE:  DIGITAL");
-			msgPacket.setCmd("log");
-			// msgPacket.setCmd("log");
-			sendMessage(msgPacket);
-		}
-		if (msgPacket.type == "log") {
-			log.info(msgPacket.value);
-		}
-	
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see coms.udp.IUdp#sendMessage(coms.MsgPacket)
 	 */
 	@Override
@@ -67,6 +71,3 @@ public class UdpServerReceiver extends AbstractUdpDispatcher implements IUdp {
 	}
 
 }
-
-
-

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sync.system.SyncUtils;
-
 import coms.MessageBuffer;
 import coms.MsgPacket;
 import coms.UdpMessenger;
@@ -19,13 +18,20 @@ import coms.UdpMessenger;
  */
 public abstract class AbstractUdpDispatcher implements Runnable {
 
-	public final static Logger					log		= LoggerFactory.getLogger(AbstractUdpDispatcher.class.getName());
-	public   volatile MessageBuffer<MsgPacket>	msgBuffer	= new MessageBuffer<MsgPacket>();
+	public final static Logger				log		= LoggerFactory.getLogger(AbstractUdpDispatcher.class.getName());
+	public volatile MessageBuffer<MsgPacket>	msgBuffer	= new MessageBuffer<MsgPacket>();
+	public AbstractUdpHandler						udpHandler	= null;
 
 	/**
 	 * 
 	 */
 	public AbstractUdpDispatcher() {}
+
+	
+	//	using super so that the node, server, and android implementations will all have access
+	public AbstractUdpDispatcher(AbstractUdpHandler handler) {
+		udpHandler = handler;
+	}
 
 	public AbstractUdpDispatcher(MessageBuffer<MsgPacket> messageBuffer) {
 		msgBuffer = messageBuffer;
@@ -33,7 +39,7 @@ public abstract class AbstractUdpDispatcher implements Runnable {
 
 	@Override
 	public void run() {
-//		System.out.println("MsgDispatcher started");
+		// System.out.println("MsgDispatcher started");
 		log.info("started");
 		while (true) {
 
@@ -58,10 +64,8 @@ public abstract class AbstractUdpDispatcher implements Runnable {
 		}
 	}
 
-	 
 	public abstract void handleMessage();
-	
+
 	public abstract void sendMessage(MsgPacket msgPacket);
-	
 
 }
