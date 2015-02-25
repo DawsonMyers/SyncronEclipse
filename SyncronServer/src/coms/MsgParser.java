@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.codesnippets4all.json.parsers.JSONParser;
 import com.codesnippets4all.json.parsers.JsonParserFactory;
+import coms.tcp.MessageTcp;
 
 /**
  * @author Dawson
@@ -40,6 +41,20 @@ public class MsgParser {
 
 		return jMap;
 
+	}
+
+	/**
+	 * @param messageTcp
+	 */
+	public static Map<String, Object> parseMsg(MessageTcp messageTcp) {
+		String jsonString = messageTcp.getJsonMsg();
+		log.info("Parsing JSON string");
+		JsonParserFactory factory = JsonParserFactory.getInstance();
+		JSONParser parser = factory.newJsonParser();
+		Map<String, Object> jMap = parser.parseJson(jsonString);
+		messageTcp.setjMap(jMap);
+
+		return jMap;
 	}
 
 }

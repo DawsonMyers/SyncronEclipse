@@ -8,11 +8,15 @@ import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.Date;
 
+import coms.tcp.ServerTcp;
+
+import naga.NIOSocket;
+
 /**
  * @author Dawson
  *
  */
-public class Client {
+public class User {
 
 	public InetAddress		ip			= null;
 	public int			port			= 0;
@@ -37,9 +41,15 @@ public class Client {
 	/**
 	 * 
 	 */
-	public Client() {}
+	public User() {}
 
-	public Client(MsgPacket msgPacket) { // , String id) {
+	
+	/**
+	 * @param serverTcp
+	 * @param nioSocket
+	 */
+//	public User(ServerTcp serverTcp, NIOSocket nioSocket) {}
+	public User(MsgPacket msgPacket) { // , String id) {
 		mMsgPacket = msgPacket;
 		mPacket = mMsgPacket.getDp();
 		this.id = mPacket.getSocketAddress().toString();
@@ -61,6 +71,7 @@ public class Client {
 	// Setters/Getters
 	// ///////////////////////////////////////////////////////////////////////////////////
 
+	
 	/**
 	 * @return object lastActiveTime of type long
 	 */

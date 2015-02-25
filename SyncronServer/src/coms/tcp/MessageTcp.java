@@ -1,73 +1,70 @@
 /**
  *
  */
-package coms;
+package coms.tcp;
 
 import java.net.DatagramPacket;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.json.simple.JSONObject;
 // import net.sf.json.JSONObject;
 // import net.sf.json.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.sun.mail.imap.protocol.ID;
+import sync.system.SyncUtils;
 
+import coms.Client;
+import coms.ComConstants;
+import coms.MsgParser;
 import coms.udp.AbstractUdpHandler;
 import coms.udp.MsgMetaData;
-import sync.system.SyncUtils;
 
 /**
  * @author Dawson
  */
-public class MsgPacket extends MsgMetaData implements ComConstants {
-	public final static Logger	log		= LoggerFactory.getLogger(MsgPacket.class.getName());
+public class MessageTcp extends MsgMetaData implements ComConstants {
+	public final static Logger	log		= LoggerFactory.getLogger(MessageTcp.class.getName());
 	public DatagramPacket		dp		= null;										;
 	private User				mUser	= null;
-
 
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	public MsgPacket() {}
-	public MsgPacket(DatagramPacket dp) {
-		setDp(dp);
-	}
+	public MessageTcp() {}
+
+	
 
 	// sending
-	public MsgPacket(User user, String jsonMsg, DatagramPacket dp) {
-		setDp(dp);
-		setClient(user);
+	public MessageTcp(User user, String jsonMsg) {
+	 
+		setUser(user);
 		setJsonMsg(jsonMsg);
 		// addNewClient();
 	}
 
-	public MsgPacket(User user, String jsonMsg) {
+	/**
+	 * @param user
+	 */
+	public void setUser(User user) {}
 
-		setClient(user);
-		setJsonMsg(jsonMsg);
-		// addNewClient();
-	}
+	 
 
-	public MsgPacket(User user, Map<String, Object> jMap) {
+	public MessageTcp(User user, Map<String, Object> jMap) {
 
-		setClient(user);
+		setUser(user);
 		prepareJsonFromMap(jMap);
 		// addNewClient();
 	}
 
 	// Receiving
-	public MsgPacket(String jsonMsg, DatagramPacket dp) {
+	public MessageTcp(String jsonMsg, DatagramPacket dp) {
 		setDp(dp);
 		setJsonMsg(jsonMsg);
 		// Also parses
 		parseJsonToMap();
 
-		addNewClient();
+		// addNewClient();
 	}
 
 	// Processing
@@ -87,9 +84,9 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	// Message Getters/Setters
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	public void reinitClient() {
-		mUser.init(this);
-	}
+	// public void reinitClient() {
+	// mClient.init(this);
+	// }
 
 	/**
 	 *
@@ -99,10 +96,10 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 		initMetaData();
 	}
 
-	public void addNewClient() {
-		mUser = new User(this);
-
-	}
+	// public void addNewClient() {
+	// mClient = new Client(this);
+	//
+	// }
 
 	/**
 	 * @return object dp of type DatagramPacket
@@ -122,19 +119,18 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	/**
 	 * @return object client of type Client
 	 */
-	public User getClient() {
+	public User getUser() {
 		return this.mUser;
 	}
 
 	/**
-	 * @param user
-	 *             the client to set
+	 * // * @param client // * the client to set //
 	 */
-	public void setClient(User user) {
-		if (user == null) addNewClient();
-		else  mUser = user;
-		mUser.init(this);
-	}
+	// public void setClient(Client client) {
+	// if (client == null) addNewClient();
+	// else mClient = client;
+	// mClient.init(this);
+	// }
 
 	/**
 	 * @return object jasonMsg of type String
@@ -152,7 +148,7 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	 */
 	public void setJsonMsg(String jsonMsg) {
 		this.mJsonMsg = jsonMsg;
-		//setPacketData();
+		// setPacketData();
 	}
 
 	public void setPacketData(String msgString) {
@@ -182,8 +178,8 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	 */
 	public Map<String, Object> getjMap() {
 		if (mJsonMsg != null) {
-			//jMap = MsgParser.parseMsg(this);
-			//extractMetaData();
+			// jMap = MsgParser.parseMsg(this);
+			// extractMetaData();
 		}
 		return this.jMap;
 	}
@@ -201,7 +197,7 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	 */
 	public void setjMap(Map<String, Object> jMap) {
 		this.jMap = jMap;
-		//initMetaData();
+		// initMetaData();
 	}
 
 	/**

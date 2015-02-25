@@ -38,7 +38,7 @@ public class UdpHandler extends Thread {
 
 	public static int							counter				= 0;
 	public static MsgTimer						timer				= new MsgTimer();
-	public static volatile Map<String, Client>		connectedClients		= new HashMap<>();
+	public static volatile Map<String, User>		connectedClients		= new HashMap<>();
 	public static volatile LinkedList<Msg>			MessageQue			= new LinkedList<>();
 
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new

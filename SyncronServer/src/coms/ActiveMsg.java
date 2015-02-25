@@ -24,7 +24,7 @@ public class ActiveMsg implements ComConstants {
 	public String	targetId	= null;
 	public String		pin			= ""; 
 	public String	value		= null;
-	public Client client  = null;
+	public User user  = null;
 	
 	
 
