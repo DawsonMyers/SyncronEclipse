@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package coms;
 
@@ -29,11 +29,14 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	public DatagramPacket		dp		= null;										;
 	private Client				mClient	= null;
 
- 
+
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public MsgPacket() {}
+	public MsgPacket(DatagramPacket dp) {
+		setDp(dp);
+	}
 
 	// sending
 	public MsgPacket(Client client, String jsonMsg, DatagramPacket dp) {
@@ -87,9 +90,9 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	public void reinitClient() {
 		mClient.init(this);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public void parseJsonToMap() {
 		MsgParser.parseMsg(this);
@@ -186,7 +189,7 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void extractMetaData() {
 		if (jMap != null) initMetaData();

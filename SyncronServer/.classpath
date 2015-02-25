@@ -38,5 +38,6 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/JSON"/>
 	<classpathentry kind="lib" path="D:/Java/exports/udp1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Network"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

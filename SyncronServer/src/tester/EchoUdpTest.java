@@ -34,4 +34,20 @@ public class EchoUdpTest {
 			}
 		}
 	}
+
+	public static void runOnThread(DatagramPacket packet){
+		new Thread(() -> {
+			DatagramSocket sock;
+			DatagramPacket pack = packet;
+					try {
+						sock = new DatagramSocket(10015);
+						sock.send(pack);
+						sock.send(pack);
+						sock.close();
+					} catch (Exception e) {
+						System.out.println(e);
+						return;
+					}
+		}).start();
+	}
 }

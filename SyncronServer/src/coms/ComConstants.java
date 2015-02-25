@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package coms;
 
@@ -48,6 +48,7 @@ public interface ComConstants {
 	public static String		HTTP_DAWSON			= "http://dawsonmyers.ca";
 	public static String		HTTP_SERVER			= "http://dawsonmyers.ca";
 	public static final int		PORT_SERVER			= 6005;
+	public static final int		PORT_UPD_SERVER			= 10000;
 
 	// /////////////// message fields
 	// meta data - every msg has these fields
@@ -76,12 +77,13 @@ public interface ComConstants {
 	public String				tSTATUS				= "status";
 	public String				tLOGIN				= "login";
 	public String				tUSER				= "user";
+	public String				tCHECKIN				= "checkin";
 
-	
+
 	public String				vSERVER				= "server";
 	public String				vANDROID				= "android";
 	public String				vNODE				= "node";
-	
+
 	public String				msgTRUE				= "1";
 	public String				msgFAULSE				= "0";
 }

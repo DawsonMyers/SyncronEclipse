@@ -20,7 +20,7 @@ import msg.ObjectMessengerThread;
 import sync.controller.ServerController;
 import sync.utils.obj.sock.MsgObject;
 
-import com.mysql.jdbc.log.Log;
+//import com.mysql.jdbc.log.Log;
 
 // import reworkedChatServer.ServerGUI;
 // import reworkedChatServer.Server.ClientThread;
@@ -76,7 +76,7 @@ public class ServerThread extends Thread {
 
 	public ServerThread() {
 		super("ServerThread");
-		  
+
 		// udpThread = new UDPServerThread(UdpBuffer);
 		// udpThread.start();
 		// startDebugInput();
@@ -166,7 +166,7 @@ public class ServerThread extends Thread {
 			// I was asked to stop
 			try {
 				serverSocket.close();
-				 
+
 				for (int i = 0; i < al.size(); ++i) {
 					ClientThread tc = al.get(i);
 					try {
@@ -186,7 +186,7 @@ public class ServerThread extends Thread {
 			String msg = sdf.format(new Date()) + " Exception on new ServerSocket: " + e + "\n";
 			// display(msg);
 		} finally {
-			
+
 			synchronized (this) {
 
 				try {

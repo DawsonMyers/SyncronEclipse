@@ -1,7 +1,7 @@
 /**
  *
  */
-package coms;
+package coms.udp.node;
 
 // import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
@@ -12,19 +12,27 @@ import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 
 import sync.system.SyncUtils;
+import coms.ComConstants;
+import coms.MessageBuffer;
+import coms.MsgPacket;
 import coms.udp.AbstractUdpHandler;
 
 /**
  * @author Dawson
  *
  */
-public class UdpMessenger implements Runnable, ComConstants {
+public class NodeUdpMessenger implements Runnable, ComConstants {
 
 	public static DatagramSocket udpSocket = null;
 	public static InetAddress receiverAddress = null;
@@ -41,17 +49,17 @@ public class UdpMessenger implements Runnable, ComConstants {
 	public static DatagramPacket nodePacket = null;
 	public static MessageBuffer<MsgPacket> incomingBuffer = null;
 	public static MessageBuffer<MsgPacket> outgoingBuffer = null;
-	public static Map<String,Object> datagramMap = new HashMap<>();
+	public static Map<String, Object> datagramMap = new HashMap<>();
 
 	AbstractUdpHandler handlerBuffers = null;
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	public UdpMessenger() {
+	public NodeUdpMessenger() {
 	}
 
-	public UdpMessenger(AbstractUdpHandler ioBuffers) {
+	public NodeUdpMessenger(AbstractUdpHandler ioBuffers) {
 		handlerBuffers = ioBuffers;
 		incomingBuffer = ioBuffers.getIncomingBuffer();
 		outgoingBuffer = ioBuffers.getOutgoingBuffer();
@@ -98,6 +106,38 @@ public class UdpMessenger implements Runnable, ComConstants {
 	/**
 	 * @Loggable(Loggable.DEBUG)
 	 */
+
+	public static MsgPacket checkinMsg = null;
+
+	public static void startBeacon() {
+
+		byte[] buf = new byte[1024];
+		InetAddress address = null;
+		try {
+			address = InetAddress.getByName(IP_SERVER);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DatagramPacket dp = new DatagramPacket(buf, buf.length, address,PORT_UPD_SERVER);
+		checkinMsg = new MsgPacket(dp);
+		String update = "{message_type: \"checkin\", sender_type:\"node\"}";
+		checkinMsg.setJsonMsg(update);
+
+		Runnable keepAliveTask = () -> sendUDP(checkinMsg);
+
+		ExecutorService executorService = Executors.newScheduledThreadPool(10);
+		((ScheduledExecutorService) executorService).scheduleAtFixedRate(
+				keepAliveTask, 0, 100, TimeUnit.MILLISECONDS);
+		// executorService.execute(new Runnable() {
+		// public void run() {
+		// System.out.println("Asynchronous task");
+		// }
+		// });
+
+		//executorService.shutdown();
+	}
+
 	public synchronized static void sendUDP(MsgPacket p) {
 		// byte[] buf = UdpBuffer.clone();
 		sendThread = new Thread("UdpSender") {
@@ -113,7 +153,8 @@ public class UdpMessenger implements Runnable, ComConstants {
 
 					DatagramPacket dp = new DatagramPacket(buf, buf.length,
 							address);
-					DatagramPacket packetFromMap = searchMap(datagramMap, p.dp.getAddress().toString());
+					DatagramPacket packetFromMap = searchMap(datagramMap, p.dp
+							.getAddress().toString());
 					if (packetFromMap != null) {
 						System.out.println("Packet found in map");
 						pack = packetFromMap;
@@ -123,8 +164,10 @@ public class UdpMessenger implements Runnable, ComConstants {
 					udpSocket.send(dp);
 					byte[] buf1 = "TESTER".getBytes();
 					DatagramSocket udpSocket1 = new DatagramSocket();
-					DatagramPacket dp1 = new DatagramPacket(buf1, buf1.length,inet, port);
-					DatagramPacket dp2 = new DatagramPacket(buf1, buf1.length,sockAddress);
+					DatagramPacket dp1 = new DatagramPacket(buf1, buf1.length,
+							inet, port);
+					DatagramPacket dp2 = new DatagramPacket(buf1, buf1.length,
+							sockAddress);
 					udpSocket1.send(dp1);
 					udpSocket1.send(dp2);
 					// udpSocket.send(p.dp);
@@ -140,9 +183,9 @@ public class UdpMessenger implements Runnable, ComConstants {
 
 	// Receiver
 	// ///////////////////////////////////////////////////////////////////////////////////
-public static InetAddress inet = null;
-public static SocketAddress sockAddress= null;
-public static int port= 0;
+	public static InetAddress inet = null;
+	public static SocketAddress sockAddress = null;
+	public static int port = 0;
 
 	public synchronized static void StartUDPListener() throws IOException {
 
@@ -173,7 +216,6 @@ public static int port= 0;
 							sockAddress = packet.getSocketAddress();
 							nodePacket = packet;
 							sockListener.send(packet);
-
 
 							putIfAbsent(datagramMap, packet);
 							System.out.println("++++++++++PACKET RECEIVED");
@@ -217,19 +259,23 @@ public static int port= 0;
 		listenerThread.start();
 	}
 
-	public static DatagramPacket searchMap(Map<String,Object> map, String keyFragment){
-		for(String id: map.keySet()) {
+	public static DatagramPacket searchMap(Map<String, Object> map,
+			String keyFragment) {
+		for (String id : map.keySet()) {
 			System.out.println("Datagram map :  " + id);
-		if (id.contains(keyFragment)) {
-	 return (DatagramPacket) map.get(id);
+			if (id.contains(keyFragment)) {
+				return (DatagramPacket) map.get(id);
+			}
 		}
-	}
 		return null;
 	}
-	public static void putIfAbsent(Map<String,Object> map, DatagramPacket packet){
-			//System.out.println("Datagram map :  " + id);
-			String address = packet.getSocketAddress().toString();
-			if (!map.containsKey(address)) map.put(address, packet);
+
+	public static void putIfAbsent(Map<String, Object> map,
+			DatagramPacket packet) {
+		// System.out.println("Datagram map :  " + id);
+		String address = packet.getSocketAddress().toString();
+		if (!map.containsKey(address))
+			map.put(address, packet);
 
 	}
 }

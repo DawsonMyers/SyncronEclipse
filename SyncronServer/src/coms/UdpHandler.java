@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package coms;
 
@@ -49,19 +49,19 @@ public class UdpHandler extends Thread {
 	public static UdpMessenger					udpMessenger;
 	public static Thread						udpMessengerThrd;
 	public static UdpHandler handler;
-	
-	
-	
-	
-	//	Started in ArdulinkSerial 
-	
+
+
+
+
+	//	Started in ArdulinkSerial
+
 //	public static void main(String[] args) {
 //		handler = new UdpHandler();
-//		
+//
 //	}
-	
-	
-	
+
+
+
 	public static synchronized void sendMessage(MsgPacket msg) {
 		outgoingMsgBuffer.addToQue(msg);
 	}
@@ -100,8 +100,8 @@ public class UdpHandler extends Thread {
 
 		log.info("Starting msgDispatchHandler");
 		msgDispatchHandler();
-		String s = "empty";
 		Tester t = new Tester();
+		String s = "empty";
 		MsgPacket packet = t.initPacket(s);
 
 		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
@@ -127,7 +127,7 @@ public class UdpHandler extends Thread {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 
 	// Incomming msg que
