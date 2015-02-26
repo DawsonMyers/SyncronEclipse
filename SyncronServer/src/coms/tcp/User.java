@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.mail.util.logging.MailHandler;
 
+import coms.ComConstants;
+import coms.tcp.server.ServerTcp;
 import naga.NIOSocket;
 import naga.SocketObserver;
 import naga.eventmachine.DelayedEvent;
@@ -19,7 +21,7 @@ import naga.packetwriter.AsciiLinePacketWriter;
  *
  */
 // jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
-public class User implements SocketObserver {
+public class User implements SocketObserver, ComConstants {
 	public final static Logger	log				= LoggerFactory.getLogger(User.class.getName());
 	private final static long	LOGIN_TIMEOUT		= 30 * 100000;
 	private final static long	INACTIVITY_TIMEOUT	= 500 * 60 * 1000;
@@ -27,7 +29,7 @@ public class User implements SocketObserver {
 	private final NIOSocket		m_socket;
 	private String				m_name;
 	private DelayedEvent		m_disconnectEvent;
-	public static String		targetMsg			= "";
+	public   String		targetMsg			= "EMPTY MESSAGE";
 
 	public User(ServerTcp server, NIOSocket socket) {
 		m_server = server;
@@ -48,7 +50,8 @@ public class User implements SocketObserver {
 		}, LOGIN_TIMEOUT);
 
 		// Send the request to log in.
-		nioSocket.write("Please enter your name:".getBytes());
+		nioSocket.write(sysREGISTER_REQUEST.getBytes());
+	//	nioSocket.write("Please enter your name:".getBytes());
 	}
 
 	public String toString() {
@@ -104,6 +107,9 @@ public class User implements SocketObserver {
 		System.out.println("msg received from -> " + m_name + "\n -> " + message);
 		// m_server.broadcast(this, m_name + ": " + message);
 	}
+	 
+	// ///////////////////////////////////////////////////////////////////////////////////
+
 
 	public void packetSent(NIOSocket socket, Object tag) {
 		System.out.println("EVENT	packetSent");

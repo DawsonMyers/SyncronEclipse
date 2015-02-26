@@ -28,33 +28,31 @@ public class ServerSenderTcp extends AbstractTcpDispatcher implements ITcp {
 	public static MsgTimer		timer	= new MsgTimer();
 
 	public ServerSenderTcp() {}
+
 	public ServerSenderTcp(AbstractTcpHandler handler) {
 		super(handler);
 	}
 
-	//	Each call is run in new thread 
+	// Each call is run in new thread
 	@Override
 	public void handleMessage() {
-		 
-		if(msgBuffer.queSize() > 0) {
+
+		if (msgBuffer.queSize() > 0) {
 			MessageTcp msg = msgBuffer.nextFromQue();
 			new Thread(() -> sendMessage(msg), "TcpSender").start();
-			 
+
 		}
 	}
-
-	 
 
 	@Override
 	public void sendMessage(MessageTcp msg) {
 		if (msg.isValid()) {
 			msg.getTargetSock().write(msg.getTargetMsgBytes());
 			log.info("Message sent to " + msg.getTargetUser().getName());
-		}else {
+		} else {
 			log.error("Could not send invalid message ");
 		}
-		
+
 	}
-	
 
 }

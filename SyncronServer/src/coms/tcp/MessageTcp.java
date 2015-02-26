@@ -19,6 +19,7 @@ import coms.Client;
 import coms.ComConstants;
 import coms.MsgParser;
 import coms.tcp.server.ServerHandlerTcp;
+import coms.tcp.server.ServerTcp;
 import coms.udp.AbstractUdpHandler;
 import coms.udp.MsgMetaData;
 
@@ -31,7 +32,7 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	public User				mUser		= null;
 	public User				mTargetUser	= null;
 	public ServerTcp			mServer		= null;
-	public static String		targetMsg			= "";
+	public   String		targetMsg			= "";
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 

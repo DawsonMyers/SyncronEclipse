@@ -3,6 +3,7 @@
  */
 package coms.udp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -22,7 +23,7 @@ public class MsgMetaData implements ComConstants {
 	public final static Logger	log			= LoggerFactory.getLogger(MsgMetaData.class.getName());
 
 	public String				mJsonMsg		= "";
-	public Map<String, Object>	jMap			= null;
+	public Map<String, Object>	jMap			= new HashMap<>();
 	public AbstractTcpHandler	tcpHandler	= ServerHandlerTcp.getInstance();
 
 	public String				protocol		= "";
@@ -86,7 +87,14 @@ public class MsgMetaData implements ComConstants {
 			return "ERROR";
 		}
 	}
+//
+// ///////////////////////////////////////////////////////////////////////////////////
 
+	
+	
+	
+	
+	
 	// Message field setters/getters
 	// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -254,6 +262,9 @@ public class MsgMetaData implements ComConstants {
 		this.clientId = clientId;
 	}
 
+	
+	
+	
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);

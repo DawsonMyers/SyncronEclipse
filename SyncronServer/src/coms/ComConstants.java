@@ -43,12 +43,27 @@ public interface ComConstants {
 
 	public static String		IP_HOME				= "192.168.1.109";
 	public static String		IP					= IP_HOME;
+	public static String		IP_LOCAL				= "localhost";
 	public static String		IP_SERVER				= "192.163.250.179";
 	public static String		HTTP_SYNCRON			= "http://syncron.ca";
 	public static String		HTTP_DAWSON			= "http://dawsonmyers.ca";
 	public static String		HTTP_SERVER			= "http://dawsonmyers.ca";
 	public static final int		PORT_SERVER			= 6005;
-	public static final int		PORT_UPD_SERVER			= 10000;
+	public static final int		PORT_SERVER_TCP		= 6500;
+	public static final int		PORT_UPD_SERVER		= 10000;
+
+	// TCP
+	// ///////////////////////////////////////////////////////////////////////////////////
+	String					sysREGISTER_REQUEST		= "<register_id>";
+	String					sysUSER_DISCON			= "<user_disconnected>";
+	String					sysCONNECTED_USERS		= "<connected_users>";
+	String					sysID_NODE		= "node";
+	String					sysID_SERVER		= "server";
+	String					sysID_ANDROID		= "android";
+	String					testMsg		= "{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}";
+	
+	// Tcp Message
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	// /////////////// message fields
 	// meta data - every msg has these fields
@@ -64,9 +79,16 @@ public interface ComConstants {
 	public String				fID					= "id";
 	public String				fREQUIRE_ACK			= "require_ack";
 
+	// To be added
+	String					fCONFIG				= "config";
+
+	// Payloads
 	public String				fVALUE				= "value";
 	public String				fPIN					= "pin";
 	public String				fDATA				= "data";
+
+	// TODO
+	public String				fQUERY_RESULT			= "query_result";
 
 	// Message types
 	public String				tDIGITAL				= "digital";
@@ -78,7 +100,9 @@ public interface ComConstants {
 	public String				tLOGIN				= "login";
 	public String				tUSER				= "user";
 	public String				tCHECKIN				= "checkin";
-
+	public String				tSTREAM				= "stream";
+	public String				tCHAT				= "chat";
+	// public String t = "chat";
 
 	public String				vSERVER				= "server";
 	public String				vANDROID				= "android";
@@ -86,4 +110,8 @@ public interface ComConstants {
 
 	public String				msgTRUE				= "1";
 	public String				msgFAULSE				= "0";
+	public String				cSHUTDOWN				= "shutdown";
+	public String				cREBOOT				= "reboot";
+	public String				cTEST				= "test";
+
 }

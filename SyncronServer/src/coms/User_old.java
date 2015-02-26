@@ -8,8 +8,7 @@ import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.Date;
 
-import coms.tcp.ServerTcp;
-
+import coms.tcp.server.ServerTcp;
 import naga.NIOSocket;
 
 /**

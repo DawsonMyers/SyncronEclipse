@@ -1,4 +1,4 @@
-package coms.tcp;
+package coms.tcp.server;
 
 // public class ChatServer {
 //
@@ -23,7 +23,8 @@ import coms.MessageBuffer;
 import coms.Msg;
 import coms.MsgPacket;
 import coms.UdpHandler;
-import coms.tcp.server.ServerHandlerTcp;
+import coms.tcp.MessageTcp;
+import coms.tcp.User;
 import naga.ConnectionAcceptor;
 import naga.NIOServerSocket;
 import naga.NIOSocket;
