@@ -18,15 +18,16 @@ import naga.packetwriter.AsciiLinePacketWriter;
  * @author Dawson
  *
  */
-//jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
+// jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
 public class User implements SocketObserver {
 	public final static Logger	log				= LoggerFactory.getLogger(User.class.getName());
 	private final static long	LOGIN_TIMEOUT		= 30 * 100000;
-	private final static long	INACTIVITY_TIMEOUT	= 5 * 60 * 10000;
-	public  final ServerTcp		m_server;
+	private final static long	INACTIVITY_TIMEOUT	= 500 * 60 * 1000;
+	public final ServerTcp		m_server;
 	private final NIOSocket		m_socket;
 	private String				m_name;
 	private DelayedEvent		m_disconnectEvent;
+	public static String		targetMsg			= "";
 
 	public User(ServerTcp server, NIOSocket socket) {
 		m_server = server;
@@ -73,16 +74,14 @@ public class User implements SocketObserver {
 			}
 		}, INACTIVITY_TIMEOUT);
 	}
-	
-	
-//	Received
-// ///////////////////////////////////////////////////////////////////////////////////
+
+	// Received
+	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void packetReceived(NIOSocket socket, byte[] packet) {
-		 
+
 		String message = new String(packet).trim();
 
-	 
 		if (message.length() == 0) return;
 
 		// Reset inactivity timer.
@@ -101,7 +100,7 @@ public class User implements SocketObserver {
 
 		MessageTcp msg = new MessageTcp(this, message);
 		m_server.incomingBuffer.addToQue(msg);
-		
+
 		System.out.println("msg received from -> " + m_name + "\n -> " + message);
 		// m_server.broadcast(this, m_name + ": " + message);
 	}
@@ -144,8 +143,22 @@ public class User implements SocketObserver {
 	public NIOSocket getSocket() {
 		return m_socket;
 	}
-//	public void setSocket(NIOSocket socket) {
-//		 m_socket = socket;
-//	}
+	// public void setSocket(NIOSocket socket) {
+	// m_socket = socket;
+	// }
+
+	/**
+	 * @return object m_name of type String
+	 */
+	public String getName() {
+		return this.m_name;
+	}
+
+	/**
+	 * @param m_name the m_name to set
+	 */
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
 
 }

@@ -13,6 +13,7 @@ import coms.MsgPacket;
 import coms.UdpMessenger;
 import coms.tcp.AbstractTcpDispatcher;
 import coms.tcp.AbstractTcpHandler;
+import coms.tcp.ITcp;
 import coms.tcp.MessageTcp;
 import coms.udp.AbstractUdpHandler;
 import coms.udp.IUdp;
@@ -21,7 +22,7 @@ import coms.udp.IUdp;
  * @author Dawson
  *
  */
-public class ServerSenderTcp extends AbstractTcpDispatcher implements IUdp {
+public class ServerSenderTcp extends AbstractTcpDispatcher implements ITcp {
 
 	public final static Logger	log		= LoggerFactory.getLogger(ServerSenderTcp.class.getName());
 	public static MsgTimer		timer	= new MsgTimer();
@@ -31,20 +32,29 @@ public class ServerSenderTcp extends AbstractTcpDispatcher implements IUdp {
 		super(handler);
 	}
 
+	//	Each call is run in new thread 
 	@Override
 	public void handleMessage() {
-		//MessageTcp msg;
+		 
 		if(msgBuffer.queSize() > 0) {
 			MessageTcp msg = msgBuffer.nextFromQue();
-			sendMessage(msg);
+			new Thread(() -> sendMessage(msg), "TcpSender").start();
+			 
 		}
 	}
 
 	 
 
 	@Override
-	public void sendMessage(MessageTcp msg) {}
-	@Override
-	public void sendMessage(MsgPacket msgPacket) {}
+	public void sendMessage(MessageTcp msg) {
+		if (msg.isValid()) {
+			msg.getTargetSock().write(msg.getTargetMsgBytes());
+			log.info("Message sent to " + msg.getTargetUser().getName());
+		}else {
+			log.error("Could not send invalid message ");
+		}
+		
+	}
+	
 
 }

@@ -41,10 +41,9 @@ public class ServerReceiverTcp extends AbstractTcpDispatcher implements ITcp {
 	public void handleMessage() {
 
 		MessageTcp msg = msgBuffer.nextFromQue();
-		//msg.addNewClient();
+	 
 		msg.setHandler(tcpHandler);
-		//msg.getjMap();
-		// Map<String, Object> jMap = MsgParser.parseMsg(msg);
+		 
 		tcpHandler.processMessage(msg);
 		// Parse and extract msg data
 

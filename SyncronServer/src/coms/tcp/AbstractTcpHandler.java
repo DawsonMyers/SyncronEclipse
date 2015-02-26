@@ -42,7 +42,7 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 	// public static volatile MessageBuffer<MessageTcp> outgoingMsgBuffer = new
 	// MessageBuffer<MessageTcp>();
 
-	//public static UdpMessenger				udpMessenger;
+	// public static UdpMessenger udpMessenger;
 	public static Thread					udpMessengerThrd;
 	public static AbstractTcpHandler			handler;
 
@@ -75,52 +75,50 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 
 	public void run() {
 		// udpMessenger = new UdpMessenger(this);
-//
-//		udpMessengerThrd = new Thread(udpMessenger);
-//		udpMessengerThrd.start();
+		//
+		// udpMessengerThrd = new Thread(udpMessenger);
+		// udpMessengerThrd.start();
 
 		log.info("Starting Handlers");
 		// startMsgHandlers();
 	}
 
 	public void processMessage(MessageTcp msg) {
-		log.debug("Extracting data");
-		// protocol = (String) json.get(PROTOCAL);
+		log.debug("Processing received message");
 
-		// Map<String, Object> jMap = msg.getjMap();
+		new Thread(() -> {
+			String type = msg.getType();
+			switch (type) {
+				case tDIGITAL:
+					handleDigitalMessage(msg);
+					break;
+				case tANALOG:
+					handleAnalogMessage(msg);
+					break;
+				case tADMIN:
+					handleAdminMessage(msg);
+					break;
+				case tUPDATE:
+					handleUpdateMessage(msg);
+					break;
+				case tREGISTER:
+					handleRegisterMessage(msg);
+					break;
+				case tSTATUS:
+					handleStatusMessage(msg);
+					break;
+				case tLOGIN:
+					handleLoginMessage(msg);
+					break;
+				case tUSER:
+					handleUserMessage(msg);
+					break;
 
-		String type = msg.getType();
-		switch (type) {
-			case tDIGITAL:
-				handleDigitalMessage(msg);
-				break;
-			case tANALOG:
-				handleAnalogMessage(msg);
-				break;
-			case tADMIN:
-				handleAdminMessage(msg);
-				break;
-			case tUPDATE:
-				handleUpdateMessage(msg);
-				break;
-			case tREGISTER:
-				handleRegisterMessage(msg);
-				break;
-			case tSTATUS:
-				handleStatusMessage(msg);
-				break;
-			case tLOGIN:
-				handleLoginMessage(msg);
-				break;
-			case tUSER:
-				handleUserMessage(msg);
-				break;
-
-			default:
-				log.error("message could not be identified");
-				break;
-		}
-
+				default:
+					log.error("message could not be identified");
+					break;
+			}
+		}).start();
 	}
 
 	/**

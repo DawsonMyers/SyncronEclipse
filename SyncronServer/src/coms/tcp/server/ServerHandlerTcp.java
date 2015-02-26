@@ -71,15 +71,16 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 
 	@Override
 	public void handleDigitalMessage(MessageTcp msg) {
-		System.out.println(ServerTcp.connectedClients.size());
+		System.out.println("Connected Users = " + ServerTcp.connectedClients.size());
 		for (String id : ServerTcp.connectedClients.keySet()) {
 			System.out.println("Connected Client:  " + id);
 			// if (id.contains("node")) {
 
 			if (id.contains(msg.getTargetId())) {
-				msg.getUser().sendToTarget(id, msg.getJsonMsg());
-				// msg.setUser(connectedClients.get(id));
-				log.error("Sending digital msg to node");
+				//msg.getUser().sendToTarget(id, msg.getJsonMsg());
+				msg.setTargetUser(ServerTcp.connectedClients.get(id));
+				if(msg.getTargetMsg().length() < 2) msg.setTargetMsg(msg.getJsonMsg());
+				log.info("Sending digital msg to " + msg.getTargetUser().getName());
 				System.out.println(msg.getClientId());
 				sendMessage(msg);
 			}

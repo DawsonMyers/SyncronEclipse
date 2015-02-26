@@ -6,6 +6,8 @@ package coms.tcp;
 import java.net.DatagramPacket;
 import java.util.Map;
 
+import naga.NIOSocket;
+
 import org.json.simple.JSONObject;
 // import net.sf.json.JSONObject;
 // import net.sf.json.JSONSerializer;
@@ -28,7 +30,8 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	public DatagramPacket		dp			= null;										;
 	public User				mUser		= null;
 	public User				mTargetUser	= null;
-
+	public ServerTcp			mServer		= null;
+	public static String		targetMsg			= "";
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +41,8 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 
 	// sending
 	public MessageTcp(User user, String jsonMsg) {
-tcpHandler =ServerHandlerTcp.getInstance();
+		tcpHandler = ServerHandlerTcp.getInstance();
+		mServer = user.m_server;
 		setUser(user);
 		setJsonMsg(jsonMsg);
 		parseJsonToMap();
@@ -123,6 +127,13 @@ tcpHandler =ServerHandlerTcp.getInstance();
 	 */
 	public User getUser() {
 		return this.mUser;
+	}
+
+	public boolean isValid() {
+		if (getUser() != null && getTargetUser() != null) {
+			if (getTargetUser().getSocket().isOpen() && getUser().targetMsg != null) { return true; }
+		}
+		return false;
 	}
 
 	/**
@@ -255,9 +266,33 @@ tcpHandler =ServerHandlerTcp.getInstance();
 	}
 
 	/**
-	 * @param targetUser the targetUser to set
+	 * @param targetUser
+	 *             the targetUser to set
 	 */
 	public void setTargetUser(User targetUser) {
 		this.mTargetUser = targetUser;
 	}
+
+	public NIOSocket getTargetSock() {
+		return mTargetUser != null ? mTargetUser.getSocket() : null;
+
+	}
+
+	/**
+	 * @return
+	 */
+	public String getTargetMsg() {
+		return targetMsg;
+	}
+	public byte[] getTargetMsgBytes() {
+		return targetMsg.getBytes();
+	}
+
+	/**
+	 * @param jsonMsg
+	 */
+	public void setTargetMsg(String jsonMsg) {
+		targetMsg = jsonMsg;
+	}
+
 }
