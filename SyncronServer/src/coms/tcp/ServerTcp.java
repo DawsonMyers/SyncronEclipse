@@ -106,10 +106,12 @@ public class ServerTcp implements ServerSocketObserver, Runnable, ComConstants {
 
 	public void broadcast(User sender, String string) {
 		// We convert the packet, then send it to all users except the sender.
-		byte[] bytesToSend = string.getBytes();
-		for (User user : m_users) {
-			if (user != sender) user.sendBroadcast(bytesToSend);
-		}
+
+		
+		//		byte[] bytesToSend = string.getBytes();
+//		for (User user : m_users) {
+//			if (user != sender) user.sendBroadcast(bytesToSend);
+//		}
 	}
 
 	/**

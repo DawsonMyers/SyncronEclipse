@@ -130,6 +130,7 @@ public class User implements SocketObserver {
 		if (m_server.connectedClients.containsKey(targetId)) {
 			User target = m_server.connectedClients.get(targetId);
 			target.getSocket().write(msgString.getBytes());
+			System.out.println("sending relay to " + targetId);
 		}
 	}
 
