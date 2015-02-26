@@ -16,7 +16,7 @@ import naga.NIOSocket;
  * @author Dawson
  *
  */
-public class User {
+public class User_old {
 
 	public InetAddress		ip			= null;
 	public int			port			= 0;
@@ -41,7 +41,7 @@ public class User {
 	/**
 	 * 
 	 */
-	public User() {}
+	public User_old() {}
 
 	
 	/**
@@ -49,7 +49,7 @@ public class User {
 	 * @param nioSocket
 	 */
 //	public User(ServerTcp serverTcp, NIOSocket nioSocket) {}
-	public User(MsgPacket msgPacket) { // , String id) {
+	public User_old(MsgPacket msgPacket) { // , String id) {
 		mMsgPacket = msgPacket;
 		mPacket = mMsgPacket.getDp();
 		this.id = mPacket.getSocketAddress().toString();

@@ -27,7 +27,7 @@ public class Tester implements ComConstants {
 	public String				VALUE		= "value";
 
 
-	User						c;							// = new Client();
+	User_old						c;							// = new Client();
 
 	public static InetAddress	ipAddress;
 

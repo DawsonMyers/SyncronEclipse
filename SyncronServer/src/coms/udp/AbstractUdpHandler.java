@@ -25,7 +25,7 @@ import sync.system.SyncUtils;
 import com.jcabi.aspects.Loggable;
 
 import coms.ActiveMsg;
-import coms.User;
+import coms.User_old;
 import coms.ComConstants;
 import coms.MessageBuffer;
 import coms.Msg;
@@ -45,10 +45,10 @@ public abstract class AbstractUdpHandler extends Thread implements ComConstants 
 
 	public static int						counter				= 0;
 	public static MsgTimer					timer				= new MsgTimer();
-	public static volatile Map<String, User>	connectedClients		= UdpHandler.connectedClients;							// new
+	public static volatile Map<String, User_old>	connectedClients		= UdpHandler.connectedClients;							// new
 																												// HashMap<>();
-	public static volatile Map<String, User>	connectedNodeClients	= new HashMap<>();
-	public static volatile Map<String, User>	connectedAndroidClients	= new HashMap<>();
+	public static volatile Map<String, User_old>	connectedNodeClients	= new HashMap<>();
+	public static volatile Map<String, User_old>	connectedAndroidClients	= new HashMap<>();
 	public static volatile LinkedList<Msg>		MessageQue			= new LinkedList<>();
 	public Map<String, Object>				implementedMap			= null;
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new

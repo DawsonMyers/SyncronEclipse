@@ -11,18 +11,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sync.serial.ArdulinkSerial;
+import coms.tcp.MessageTcp;
 import coms.MsgPacket;
 import coms.MsgParser;
-import coms.UdpMessenger;
-import coms.udp.AbstractUdpDispatcher;
-import coms.udp.AbstractUdpHandler;
-import coms.udp.IUdp;
+ 
+import coms.tcp.AbstractTcpDispatcher;
+import coms.tcp.AbstractTcpHandler;
+ 
+import coms.tcp.ITcp;
 
 /**
  * @author Dawson
  *
  */
-public class ServerReceiverTcp extends AbstractUdpDispatcher implements IUdp {
+public class ServerReceiverTcp extends AbstractTcpDispatcher implements ITcp {
 
 	// AbstractUdpHandler mHandler = null;
 	public final static Logger	log		= LoggerFactory.getLogger(ServerReceiverTcp.class.getName());
@@ -30,7 +32,7 @@ public class ServerReceiverTcp extends AbstractUdpDispatcher implements IUdp {
 
 	public ServerReceiverTcp() {}
 
-	public ServerReceiverTcp(AbstractUdpHandler handler) {
+	public ServerReceiverTcp(AbstractTcpHandler handler) {
 		super(handler);
 		// mHandler = handler;
 	}
@@ -38,37 +40,42 @@ public class ServerReceiverTcp extends AbstractUdpDispatcher implements IUdp {
 	@Override
 	public void handleMessage() {
 
-		MsgPacket msgPacket = msgBuffer.nextFromQue();
-		//msgPacket.addNewClient();
-		msgPacket.setHandler(udpHandler);
-		//msgPacket.getjMap();
-		// Map<String, Object> jMap = MsgParser.parseMsg(msgPacket);
-		udpHandler.processMessage(msgPacket);
+		MessageTcp msg = msgBuffer.nextFromQue();
+		//msg.addNewClient();
+		msg.setHandler(tcpHandler);
+		//msg.getjMap();
+		// Map<String, Object> jMap = MsgParser.parseMsg(msg);
+		tcpHandler.processMessage(msg);
 		// Parse and extract msg data
 
-		timer.finish();
-		timer.print();
+//		timer.finish();
+//		timer.print();
 		//
-		// ArdulinkSerial.setPin(msgPacket.getPin(), msgPacket.getIntValue());
-		// if (msgPacket.type.equals("digital")) {
+		// ArdulinkSerial.setPin(msg.getPin(), msg.getIntValue());
+		// if (msg.type.equals("digital")) {
 		// log.info("INCOMMING MSG OF TYPE:  DIGITAL");
-		// msgPacket.setCmd("log");
-		// // msgPacket.setCmd("log");
-		// sendMessage(msgPacket);
+		// msg.setCmd("log");
+		// // msg.setCmd("log");
+		// sendMessage(msg);
 		// }
-		// if (msgPacket.type == "log") {
-		// log.info(msgPacket.value);
+		// if (msg.type == "log") {
+		// log.info(msg.value);
 		// }
 
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see coms.udp.IUdp#sendMessage(coms.MsgPacket)
+	 * @see coms.udp.IUdp#sendMessage(coms.MessageTcp)
 	 */
 	@Override
-	public void sendMessage(MsgPacket msgPacket) {
-		UdpMessenger.sendUDP(msgPacket);
+	public void sendMessage(MessageTcp msg) {
+		//UdpMessenger.sendUDP(msg);
 	}
+
+ 
+
+
+
 
 }

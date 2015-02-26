@@ -12,17 +12,18 @@ package coms.tcp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
- 
 import coms.ComConstants;
 import coms.MessageBuffer;
 import coms.Msg;
 import coms.MsgPacket;
 import coms.UdpHandler;
+import coms.tcp.server.ServerHandlerTcp;
 import naga.ConnectionAcceptor;
 import naga.NIOServerSocket;
 import naga.NIOSocket;
@@ -42,14 +43,16 @@ import naga.packetwriter.AsciiLinePacketWriter;
  */
 public class ServerTcp implements ServerSocketObserver, Runnable, ComConstants {
 
-	public static MessageBuffer<MsgPacket>		incomingBuffer			= null;
-	public static MessageBuffer<MsgPacket>		outgoingBuffer			= null;
+	public static MessageBuffer<MessageTcp>		incomingBuffer			= null;
+	public static MessageBuffer<MessageTcp>		outgoingBuffer			= null;
+	public static ServerHandlerTcp			mHandler				= ServerHandlerTcp.getInstance();
 
 	public static volatile Map<String, User>	connectedClients		= new HashMap<String, User>();	// new
 
 	public static volatile Map<String, User>	connectedNodeClients	= new HashMap<>();
 	public static volatile Map<String, User>	connectedAndroidClients	= new HashMap<>();
 	public static volatile LinkedList<Msg>		MessageQue			= new LinkedList<>();
+	private static ServerTcp					mServer				= null;
 	public Map<String, Object>				implementedMap			= null;
 
 	public final EventMachine				m_eventMachine;
@@ -57,10 +60,26 @@ public class ServerTcp implements ServerSocketObserver, Runnable, ComConstants {
 	// LinkedBlockingQueue<>();
 	public final List<User>					m_users;
 
+	//
+	// ///////////////////////////////////////////////////////////////////////////////////
+
 	ServerTcp(EventMachine machine) {
+		mServer = this;
 		m_eventMachine = machine;
 		m_users = new ArrayList<User>();
 		// m_users = new ArrayList<User>();
+		mHandler = ServerHandlerTcp.getInstance();
+		mHandler.start();
+		incomingBuffer = mHandler.getIncomingBuffer();
+		outgoingBuffer = mHandler.getOutgoingBuffer();
+	}
+
+	public static ServerTcp getInstance() {
+		if (mServer == null) {
+			// mServer = new ServerTcp();
+		}
+		return mServer;
+
 	}
 
 	public void acceptFailed(IOException exception) {
@@ -117,96 +136,65 @@ public class ServerTcp implements ServerSocketObserver, Runnable, ComConstants {
 		return m_eventMachine;
 	}
 
-	/*private static class User implements SocketObserver {
-		private final static long	LOGIN_TIMEOUT		= 30 * 1000;
-		private final static long	INACTIVITY_TIMEOUT	= 5 * 60 * 1000;
-		private final ServerTcp		m_server;
-		private final NIOSocket		m_socket;
-		private String				m_name;
-		private DelayedEvent		m_disconnectEvent;
+	public void sendToTarget(String targetId, String msgString) {
 
-		private User(ServerTcp server, NIOSocket socket) {
-			m_server = server;
-			m_socket = socket;
-			m_socket.setPacketReader(new AsciiLinePacketReader());
-			m_socket.setPacketWriter(new AsciiLinePacketWriter());
-			m_socket.listen(this);
-			m_name = null;
+		if (connectedClients.containsKey(targetId)) {
+			User target = connectedClients.get(targetId);
+			target.getSocket().write(msgString.getBytes());
 		}
+	}
 
-		public void connectionOpened(NIOSocket nioSocket) {
-			// We start by scheduling a disconnect event for the login.
-			m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable() {
-				public void run() {
-					m_socket.write("Disconnecting due to inactivity".getBytes());
-					m_socket.closeAfterWrite();
-				}
-			}, LOGIN_TIMEOUT);
-
-			// Send the request to log in.
-			nioSocket.write("Please enter your name:".getBytes());
+	public static User userLookup(String keyFragment) {
+		for (String key : connectedClients.keySet()) {
+			if (key.contains(keyFragment)) return connectedClients.get(key);
 		}
+		return null;
+	}
 
-		public String toString() {
-			return m_name != null ? m_name + "@" + m_socket.getIp() : "anon@" + m_socket.getIp();
-		}
-
-		public void connectionBroken(NIOSocket nioSocket, Exception exception) {
-			// Inform the other users if the user was logged in.
-			if (m_name != null) {
-				m_server.broadcast(this, m_name + " left the chat.");
-			}
-			// Remove the user.
-			m_server.removeUser(this);
-		}
-
-		private void scheduleInactivityEvent() {
-			// Cancel the last disconnect event, schedule another.
-			if (m_disconnectEvent != null) m_disconnectEvent.cancel();
-			m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable() {
-				public void run() {
-					m_socket.write("Disconnected due to inactivity.".getBytes());
-					m_socket.closeAfterWrite();
-				}
-			}, INACTIVITY_TIMEOUT);
-		}
-
-		public void packetReceived(NIOSocket socket, byte[] packet) {
-			// Create the string. For real life scenarios, you'd handle
-			// exceptions here.
-			String message = new String(packet).trim();
-
-			// Ignore empty lines
-			if (message.length() == 0) return;
-
-			// Reset inactivity timer.
-			scheduleInactivityEvent();
-
-			// ONLY happens on first connect
-			// In this protocol, the first line entered is the name.
-			if (m_name == null) {
-				// User joined the chat.
-				m_name = message;
-				System.out.println(this + " logged in.");
-				m_server.broadcast(this, m_name + " has joined the chat.");
-				m_socket.write(("Welcome " + m_name + ". There are " + m_server.m_users.size() + " user(s) currently logged in.").getBytes());
-				return;
-			}
-			m_server.broadcast(this, m_name + ": " + message);
-		}
-
-		public void packetSent(NIOSocket socket, Object tag) {
-			// No need to handle this case.
-		}
-
-		public void sendBroadcast(byte[] bytesToSend) {
-			// Only send broadcast to users logged in.
-			if (m_name != null) {
-				m_socket.write(bytesToSend);
-			}
-
-		}
-	}*/
+	/*
+	 * private static class User implements SocketObserver { private final
+	 * static long LOGIN_TIMEOUT = 30 * 1000; private final static long
+	 * INACTIVITY_TIMEOUT = 5 * 60 * 1000; private final ServerTcp m_server;
+	 * private final NIOSocket m_socket; private String m_name; private
+	 * DelayedEvent m_disconnectEvent; private User(ServerTcp server, NIOSocket
+	 * socket) { m_server = server; m_socket = socket;
+	 * m_socket.setPacketReader(new AsciiLinePacketReader());
+	 * m_socket.setPacketWriter(new AsciiLinePacketWriter());
+	 * m_socket.listen(this); m_name = null; } public void
+	 * connectionOpened(NIOSocket nioSocket) { // We start by scheduling a
+	 * disconnect event for the login. m_disconnectEvent =
+	 * m_server.getEventMachine().executeLater(new Runnable() { public void
+	 * run() { m_socket.write("Disconnecting due to inactivity".getBytes());
+	 * m_socket.closeAfterWrite(); } }, LOGIN_TIMEOUT); // Send the request to
+	 * log in. nioSocket.write("Please enter your name:".getBytes()); } public
+	 * String toString() { return m_name != null ? m_name + "@" +
+	 * m_socket.getIp() : "anon@" + m_socket.getIp(); } public void
+	 * connectionBroken(NIOSocket nioSocket, Exception exception) { // Inform
+	 * the other users if the user was logged in. if (m_name != null) {
+	 * m_server.broadcast(this, m_name + " left the chat."); } // Remove the
+	 * user. m_server.removeUser(this); } private void
+	 * scheduleInactivityEvent() { // Cancel the last disconnect event,
+	 * schedule another. if (m_disconnectEvent != null)
+	 * m_disconnectEvent.cancel(); m_disconnectEvent =
+	 * m_server.getEventMachine().executeLater(new Runnable() { public void
+	 * run() { m_socket.write("Disconnected due to inactivity.".getBytes());
+	 * m_socket.closeAfterWrite(); } }, INACTIVITY_TIMEOUT); } public void
+	 * packetReceived(NIOSocket socket, byte[] packet) { // Create the string.
+	 * For real life scenarios, you'd handle // exceptions here. String message
+	 * = new String(packet).trim(); // Ignore empty lines if (message.length()
+	 * == 0) return; // Reset inactivity timer. scheduleInactivityEvent(); //
+	 * ONLY happens on first connect // In this protocol, the first line
+	 * entered is the name. if (m_name == null) { // User joined the chat.
+	 * m_name = message; System.out.println(this + " logged in.");
+	 * m_server.broadcast(this, m_name + " has joined the chat.");
+	 * m_socket.write(("Welcome " + m_name + ". There are " +
+	 * m_server.m_users.size() + " user(s) currently logged in.").getBytes());
+	 * return; } m_server.broadcast(this, m_name + ": " + message); } public
+	 * void packetSent(NIOSocket socket, Object tag) { // No need to handle
+	 * this case. } public void sendBroadcast(byte[] bytesToSend) { // Only
+	 * send broadcast to users logged in. if (m_name != null) {
+	 * m_socket.write(bytesToSend); } } }
+	 */
 
 	@Override
 	public void run() {}

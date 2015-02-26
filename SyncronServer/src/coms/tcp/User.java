@@ -6,6 +6,8 @@ package coms.tcp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.mail.util.logging.MailHandler;
+
 import naga.NIOSocket;
 import naga.SocketObserver;
 import naga.eventmachine.DelayedEvent;
@@ -16,12 +18,12 @@ import naga.packetwriter.AsciiLinePacketWriter;
  * @author Dawson
  *
  */
-
+//jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
 public class User implements SocketObserver {
 	public final static Logger	log				= LoggerFactory.getLogger(User.class.getName());
-	private final static long	LOGIN_TIMEOUT		= 30 * 1000;
-	private final static long	INACTIVITY_TIMEOUT	= 5 * 60 * 1000;
-	private final ServerTcp		m_server;
+	private final static long	LOGIN_TIMEOUT		= 30 * 100000;
+	private final static long	INACTIVITY_TIMEOUT	= 5 * 60 * 10000;
+	public  final ServerTcp		m_server;
 	private final NIOSocket		m_socket;
 	private String				m_name;
 	private DelayedEvent		m_disconnectEvent;
@@ -29,9 +31,9 @@ public class User implements SocketObserver {
 	public User(ServerTcp server, NIOSocket socket) {
 		m_server = server;
 		m_socket = socket;
-		m_socket.setPacketReader(new AsciiLinePacketReader());
-		m_socket.setPacketWriter(new AsciiLinePacketWriter());
-		m_socket.listen(this);
+		getSocket().setPacketReader(new AsciiLinePacketReader());
+		getSocket().setPacketWriter(new AsciiLinePacketWriter());
+		getSocket().listen(this);
 		m_name = null;
 	}
 
@@ -39,8 +41,8 @@ public class User implements SocketObserver {
 		// We start by scheduling a disconnect event for the login.
 		m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable() {
 			public void run() {
-				m_socket.write("Disconnecting due to inactivity".getBytes());
-				m_socket.closeAfterWrite();
+				getSocket().write("Disconnecting due to inactivity".getBytes());
+				getSocket().closeAfterWrite();
 			}
 		}, LOGIN_TIMEOUT);
 
@@ -49,7 +51,7 @@ public class User implements SocketObserver {
 	}
 
 	public String toString() {
-		return m_name != null ? m_name + "@" + m_socket.getIp() : "anon@" + m_socket.getIp();
+		return m_name != null ? m_name + "@" + getSocket().getIp() : "anon@" + getSocket().getIp();
 	}
 
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
@@ -66,18 +68,21 @@ public class User implements SocketObserver {
 		if (m_disconnectEvent != null) m_disconnectEvent.cancel();
 		m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable() {
 			public void run() {
-				m_socket.write("Disconnected due to inactivity.".getBytes());
-				m_socket.closeAfterWrite();
+				getSocket().write("Disconnected due to inactivity.".getBytes());
+				getSocket().closeAfterWrite();
 			}
 		}, INACTIVITY_TIMEOUT);
 	}
+	
+	
+//	Received
+// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void packetReceived(NIOSocket socket, byte[] packet) {
-		// Create the string. For real life scenarios, you'd handle
-		// exceptions here.
+		 
 		String message = new String(packet).trim();
 
-		// Ignore empty lines
+	 
 		if (message.length() == 0) return;
 
 		// Reset inactivity timer.
@@ -86,25 +91,60 @@ public class User implements SocketObserver {
 		// ONLY happens on first connect
 		// In this protocol, the first line entered is the name.
 		if (m_name == null) {
-			// User joined the chat.
 			m_name = message;
+			m_server.connectedClients.putIfAbsent(m_name, this);
 			System.out.println(this + " logged in.");
-			m_server.broadcast(this, m_name + " has joined the chat.");
-			m_socket.write(("Welcome " + m_name + ". There are " + m_server.m_users.size() + " user(s) currently logged in.").getBytes());
+			m_server.broadcast(this, m_name + " has connected.");
+			getSocket().write(("Welcome " + m_name + ". There are " + m_server.m_users.size() + " user(s) currently logged in.").getBytes());
 			return;
 		}
-		m_server.broadcast(this, m_name + ": " + message);
+
+		MessageTcp msg = new MessageTcp(this, message);
+		m_server.incomingBuffer.addToQue(msg);
+		
+		System.out.println("msg received from -> " + m_name + "\n -> " + message);
+		// m_server.broadcast(this, m_name + ": " + message);
 	}
 
 	public void packetSent(NIOSocket socket, Object tag) {
-		// No need to handle this case.
+		System.out.println("EVENT	packetSent");
 	}
 
 	public void sendBroadcast(byte[] bytesToSend) {
 		// Only send broadcast to users logged in.
 		if (m_name != null) {
-			m_socket.write(bytesToSend);
+			getSocket().write(bytesToSend);
 		}
 
 	}
+
+	public void sendToTarget(byte[] bytesToSend, User target) {
+		// send to specific client
+		if (target != null) {
+			target.getSocket().write(bytesToSend);
+		}
+	}
+
+	public void sendToTarget(String targetId, String msgString) {
+
+		if (m_server.connectedClients.containsKey(targetId)) {
+			User target = m_server.connectedClients.get(targetId);
+			target.getSocket().write(msgString.getBytes());
+		}
+	}
+
+	public void sendMessage(String msgString) {
+		getSocket().write(msgString.getBytes());
+	}
+
+	/**
+	 * @return object m_socket of type NIOSocket
+	 */
+	public NIOSocket getSocket() {
+		return m_socket;
+	}
+//	public void setSocket(NIOSocket socket) {
+//		 m_socket = socket;
+//	}
+
 }

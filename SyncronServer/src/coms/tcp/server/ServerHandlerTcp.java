@@ -3,123 +3,136 @@
  */
 package coms.tcp.server;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import coms.MessageBuffer;
-import coms.MsgPacket;
-import coms.udp.AbstractUdpHandler;
-import coms.udp.server.UdpServerReceiver;
-import coms.udp.server.UdpServerSender;
+import coms.tcp.AbstractTcpHandler;
+import coms.tcp.MessageTcp;
+import coms.tcp.ServerTcp;
 
 /**
  * @author Dawson
  *
  */
-public class ServerHandlerTcp extends AbstractUdpHandler {
-	public final static Logger	log	= LoggerFactory.getLogger(ServerHandlerTcp.class.getName());
+public class ServerHandlerTcp extends AbstractTcpHandler {
+	public final static Logger		log		= LoggerFactory.getLogger(ServerHandlerTcp.class.getName());
 
-	UdpServerReceiver			incomingHandler;
-	UdpServerSender			outgoingHandler;
+	ServerReceiverTcp				incomingHandler;
+	ServerSenderTcp				outgoingHandler;
+	public static ServerHandlerTcp	mHandler	= null;
+	public static ServerTcp mServer= ServerTcp.getInstance();
 
-	public   ServerHandlerTcp() {
-		//	handlers started in super
+	
+	//	jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
+	
+	public ServerHandlerTcp() {
+		// handlers started in super
 		startMsgHandlers();
+		mHandler = this;
+		connectedClients = mServer.connectedClients;
+		mServer = ServerTcp.getInstance();
+	}
+
+	public static ServerHandlerTcp getInstance() {
+		if (mHandler == null) {
+			mHandler = new ServerHandlerTcp();
+		}
+		return mHandler;
 
 	}
 
 	@Override
 	public synchronized void startMsgHandlers() {
-		incomingHandler = new UdpServerReceiver(this);
-		new Thread(incomingHandler, "IncomingUdpHandler").start();
+		incomingHandler = new ServerReceiverTcp(this);
+		new Thread(incomingHandler, "Incoming Handler").start();
 
-		outgoingHandler = new UdpServerSender(this);
-		new Thread(outgoingHandler, "OutgoingUdpHandler").start();
+		outgoingHandler = new ServerSenderTcp(this);
+		new Thread(outgoingHandler, "Outgoing Handler").start();
 	}
 
 	@Override
-	public void handleIncomingMessage(MsgPacket msg) {}
+	public void handleIncomingMessage(MessageTcp msg) {}
 
 	@Override
-	public void handleOutgoingMessage(MsgPacket msg) {}
+	public void handleOutgoingMessage(MessageTcp msg) {}
 
 	@Override
-	public MessageBuffer<MsgPacket> getIncomingBuffer() {
+	public MessageBuffer<MessageTcp> getIncomingBuffer() {
 		return incomingHandler.msgBuffer;
 	}
 
 	@Override
-	public MessageBuffer<MsgPacket> getOutgoingBuffer() {
+	public MessageBuffer<MessageTcp> getOutgoingBuffer() {
 		return outgoingHandler.msgBuffer;
 	}
 
-	//	Message received callbacks
+	// Message received callbacks
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	
 	@Override
-	public void handleDigitalMessage(MsgPacket msgPacket) {
-		System.out.println(connectedClients.size());
-		for(String id: connectedClients.keySet()) {
+	public void handleDigitalMessage(MessageTcp msg) {
+		System.out.println(ServerTcp.connectedClients.size());
+		for (String id : ServerTcp.connectedClients.keySet()) {
 			System.out.println("Connected Client:  " + id);
-		if (id.contains("node")) {
-			msgPacket.setClient(connectedClients.get(id));
-			log.error("Sending digital msg to node");
-			System.out.println(msgPacket.getClientId());
-			sendMessage(msgPacket);
+//			if (id.contains("node")) {
+
+			if (id.contains(msg.getTargetId())) {
+				msg.getUser().sendToTarget(id, msg.getJsonMsg());
+				//msg.setUser(connectedClients.get(id));
+				log.error("Sending digital msg to node");
+				System.out.println(msg.getClientId());
+				sendMessage(msg);
+			}
 		}
-		}
-		
-		System.out.println("UdpServerHandler::handleDigitalMessage");
+
+		System.out.println("ServerHandlerTcp::handleDigitalMessage");
 	}
 
 	@Override
-	public void handleAnalogMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleAnalogMessage");
+	public void handleAnalogMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleAnalogMessage");
 	}
 
 	@Override
-	public void handleAdminMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleAdminMessage");
+	public void handleAdminMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleAdminMessage");
 		System.exit(0);
 	}
 
 	@Override
-	public void handleUpdateMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleUpdateMessage");
+	public void handleUpdateMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleUpdateMessage");
 	}
 
 	@Override
-	public void handleRegisterMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleRegisterMessage");
+	public void handleRegisterMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleRegisterMessage");
 	}
 
 	@Override
-	public void handleStatusMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleStatusMessage");
+	public void handleStatusMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleStatusMessage");
 	}
 
 	@Override
-	public void handleLoginMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleLoginMessage");
+	public void handleLoginMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleLoginMessage");
 	}
 
 	@Override
-	public void handleUserMessage(MsgPacket msgPacket) {
-		System.out.println("UdpServerHandler::handleUserMessage");
+	public void handleUserMessage(MessageTcp msg) {
+		System.out.println("ServerHandlerTcp::handleUserMessage");
 	}
 
 	@Override
-	public void sendMessage(MsgPacket msg) {
+	public void sendMessage(MessageTcp msg) {
 		outgoingHandler.sendMessage(msg);
 	}
 
 	@Override
 	public void implementedMapConfig() {
-		//implementedMap.put(fTYPE, "add type");
+		// implementedMap.put(fTYPE, "add type");
 		implementedMap.put(fSENDER_TYPE, vSERVER);
 	}
 

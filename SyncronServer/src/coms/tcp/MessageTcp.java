@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sync.system.SyncUtils;
-
 import coms.Client;
 import coms.ComConstants;
 import coms.MsgParser;
+import coms.tcp.server.ServerHandlerTcp;
 import coms.udp.AbstractUdpHandler;
 import coms.udp.MsgMetaData;
 
@@ -24,31 +24,33 @@ import coms.udp.MsgMetaData;
  * @author Dawson
  */
 public class MessageTcp extends MsgMetaData implements ComConstants {
-	public final static Logger	log		= LoggerFactory.getLogger(MessageTcp.class.getName());
-	public DatagramPacket		dp		= null;										;
-	private User				mUser	= null;
+	public final static Logger	log			= LoggerFactory.getLogger(MessageTcp.class.getName());
+	public DatagramPacket		dp			= null;										;
+	public User				mUser		= null;
+	public User				mTargetUser	= null;
 
 	// Constructors
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public MessageTcp() {}
 
-	
+	// jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
 
 	// sending
 	public MessageTcp(User user, String jsonMsg) {
-	 
+tcpHandler =ServerHandlerTcp.getInstance();
 		setUser(user);
 		setJsonMsg(jsonMsg);
+		parseJsonToMap();
 		// addNewClient();
 	}
 
 	/**
 	 * @param user
 	 */
-	public void setUser(User user) {}
-
-	 
+	public void setUser(User user) {
+		mUser = user;
+	}
 
 	public MessageTcp(User user, Map<String, Object> jMap) {
 
@@ -58,8 +60,8 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	}
 
 	// Receiving
-	public MessageTcp(String jsonMsg, DatagramPacket dp) {
-		setDp(dp);
+	public MessageTcp(String jsonMsg) {
+
 		setJsonMsg(jsonMsg);
 		// Also parses
 		parseJsonToMap();
@@ -102,19 +104,19 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	// }
 
 	/**
-	 * @return object dp of type DatagramPacket
+	 * // * @return object dp of type DatagramPacket //
 	 */
-	public DatagramPacket getDp() {
-		return this.dp;
-	}
-
-	/**
-	 * @param dp
-	 *             the dp to set
-	 */
-	public void setDp(DatagramPacket dp) {
-		this.dp = dp;
-	}
+	// public DatagramPacket getDp() {
+	// return this.dp;
+	// }
+	//
+	// /**
+	// * @param dp
+	// * the dp to set
+	// */
+	// public void setDp(DatagramPacket dp) {
+	// this.dp = dp;
+	// }
 
 	/**
 	 * @return object client of type Client
@@ -151,13 +153,13 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 		// setPacketData();
 	}
 
-	public void setPacketData(String msgString) {
-		dp.setData(msgString.getBytes());
-	}
-
-	public void setPacketData() {
-		dp.setData(mJsonMsg.getBytes());
-	}
+	// public void setPacketData(String msgString) {
+	// dp.setData(msgString.getBytes());
+	// }
+	//
+	// public void setPacketData() {
+	// dp.setData(mJsonMsg.getBytes());
+	// }
 
 	public String toJsonString(Map<String, Object> jMap) {
 		try {
@@ -188,6 +190,7 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	 *
 	 */
 	public void extractMetaData() {
+		jMap = MsgParser.parseMsg(this);
 		if (jMap != null) initMetaData();
 	}
 
@@ -240,7 +243,21 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	/**
 	 * @param udpHandler
 	 */
-	public void setHandler(AbstractUdpHandler udpHandler) {
-		this.udpHandler = udpHandler;
+	public void setHandler(AbstractTcpHandler tcpHandler) {
+		this.tcpHandler = tcpHandler;
+	}
+
+	/**
+	 * @return object targetUser of type User
+	 */
+	public User getTargetUser() {
+		return this.mTargetUser;
+	}
+
+	/**
+	 * @param targetUser the targetUser to set
+	 */
+	public void setTargetUser(User targetUser) {
+		this.mTargetUser = targetUser;
 	}
 }

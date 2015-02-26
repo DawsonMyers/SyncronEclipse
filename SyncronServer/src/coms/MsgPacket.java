@@ -27,7 +27,7 @@ import sync.system.SyncUtils;
 public class MsgPacket extends MsgMetaData implements ComConstants {
 	public final static Logger	log		= LoggerFactory.getLogger(MsgPacket.class.getName());
 	public DatagramPacket		dp		= null;										;
-	private User				mUser	= null;
+	private User_old				mUser_old	= null;
 
 
 	// Constructors
@@ -39,23 +39,23 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	}
 
 	// sending
-	public MsgPacket(User user, String jsonMsg, DatagramPacket dp) {
+	public MsgPacket(User_old user_old, String jsonMsg, DatagramPacket dp) {
 		setDp(dp);
-		setClient(user);
+		setClient(user_old);
 		setJsonMsg(jsonMsg);
 		// addNewClient();
 	}
 
-	public MsgPacket(User user, String jsonMsg) {
+	public MsgPacket(User_old user_old, String jsonMsg) {
 
-		setClient(user);
+		setClient(user_old);
 		setJsonMsg(jsonMsg);
 		// addNewClient();
 	}
 
-	public MsgPacket(User user, Map<String, Object> jMap) {
+	public MsgPacket(User_old user_old, Map<String, Object> jMap) {
 
-		setClient(user);
+		setClient(user_old);
 		prepareJsonFromMap(jMap);
 		// addNewClient();
 	}
@@ -88,7 +88,7 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void reinitClient() {
-		mUser.init(this);
+		mUser_old.init(this);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	}
 
 	public void addNewClient() {
-		mUser = new User(this);
+		mUser_old = new User_old(this);
 
 	}
 
@@ -122,18 +122,18 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	/**
 	 * @return object client of type Client
 	 */
-	public User getClient() {
-		return this.mUser;
+	public User_old getClient() {
+		return this.mUser_old;
 	}
 
 	/**
-	 * @param user
+	 * @param user_old
 	 *             the client to set
 	 */
-	public void setClient(User user) {
-		if (user == null) addNewClient();
-		else  mUser = user;
-		mUser.init(this);
+	public void setClient(User_old user_old) {
+		if (user_old == null) addNewClient();
+		else  mUser_old = user_old;
+		mUser_old.init(this);
 	}
 
 	/**
@@ -245,6 +245,6 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 	 * @param udpHandler
 	 */
 	public void setHandler(AbstractUdpHandler udpHandler) {
-		this.udpHandler = udpHandler;
+		//this.tcpHandler = udpHandler;
 	}
 }

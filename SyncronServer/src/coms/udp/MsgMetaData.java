@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import coms.ComConstants;
+import coms.tcp.AbstractTcpHandler;
+import coms.tcp.server.ServerHandlerTcp;
 
 /**
  * @author Dawson
@@ -21,7 +23,7 @@ public class MsgMetaData implements ComConstants {
 
 	public String				mJsonMsg		= "";
 	public Map<String, Object>	jMap			= null;
-	public AbstractUdpHandler	udpHandler	= null;
+	public AbstractTcpHandler	tcpHandler	= ServerHandlerTcp.getInstance();
 
 	public String				protocol		= "";
 	public String				type			= "";
@@ -168,6 +170,20 @@ public class MsgMetaData implements ComConstants {
 	 */
 	public String getMessageId() {
 		return this.messageId;
+	}
+
+	/**
+	 * @return object tcpHandler of type AbstractTcpHandler
+	 */
+	public AbstractTcpHandler getTcpHandler() {
+		return this.tcpHandler;
+	}
+
+	/**
+	 * @param tcpHandler the tcpHandler to set
+	 */
+	public void setTcpHandler(AbstractTcpHandler tcpHandler) {
+		this.tcpHandler = tcpHandler;
 	}
 
 	/**
