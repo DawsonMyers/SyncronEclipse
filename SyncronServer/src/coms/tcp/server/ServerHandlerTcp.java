@@ -21,11 +21,10 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 	ServerReceiverTcp				incomingHandler;
 	ServerSenderTcp				outgoingHandler;
 	public static ServerHandlerTcp	mHandler	= null;
-	public static ServerTcp mServer= ServerTcp.getInstance();
+	public static ServerTcp			mServer	= ServerTcp.getInstance();
 
-	
-	//	jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
-	
+	// jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
+
 	public ServerHandlerTcp() {
 		// handlers started in super
 		startMsgHandlers();
@@ -75,11 +74,11 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 		System.out.println(ServerTcp.connectedClients.size());
 		for (String id : ServerTcp.connectedClients.keySet()) {
 			System.out.println("Connected Client:  " + id);
-//			if (id.contains("node")) {
+			// if (id.contains("node")) {
 
 			if (id.contains(msg.getTargetId())) {
 				msg.getUser().sendToTarget(id, msg.getJsonMsg());
-				//msg.setUser(connectedClients.get(id));
+				// msg.setUser(connectedClients.get(id));
 				log.error("Sending digital msg to node");
 				System.out.println(msg.getClientId());
 				sendMessage(msg);
