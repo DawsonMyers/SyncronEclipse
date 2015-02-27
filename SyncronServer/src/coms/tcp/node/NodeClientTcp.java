@@ -35,6 +35,7 @@ public class NodeClientTcp extends Thread implements SocketObserver,  ComConstan
 	public static NIOSocket		socket		= null;
 	public static NodeClientTcp mClient = null;
 	public ClientHandlerTcp handler = null;
+	public String host =  IP_SERVER;//IP_LOCAL;
 	// public NodeClientTcp() {
 	// }
 	public NodeClientTcp() {}
@@ -57,7 +58,6 @@ public class NodeClientTcp extends Thread implements SocketObserver,  ComConstan
 	public void run() {
 	//public static void main(String[] args) {
 		int port = 6500;// Integer.parseInt(args[0]);
-		String host = IP_LOCAL; // IP_SERVER;
 		InetSocketAddress address = new InetSocketAddress(host, port);
 		try {
 			EventMachine machine = new EventMachine();

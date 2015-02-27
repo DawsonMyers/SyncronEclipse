@@ -1,14 +1,13 @@
 package sync.main;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
-
-import coms.udp.server.UdpServerHandler;
+import java.util.Date;
 
 import msg.MessageServerThread;
 import sync.controller.ServerController;
-import sync.sock.server.ServerThread;
-import sync.sock.server.UDPServerThread;
+
+import coms.tcp.server.ServerTcp;
+import coms.udp.server.UdpServerHandler;
 
 public class RunServer {
 	static// server;
@@ -20,7 +19,7 @@ public class RunServer {
 	Date							date;
 	ServerController				controller		= ServerController.getInstance();
 	private static SimpleDateFormat	sdf;
-
+	public static ServerTcp			mServer = null;
 	public static UdpServerHandler	udpServerHandler	= null;
 
 	RunServer() {
@@ -57,6 +56,7 @@ public class RunServer {
 	synchronized static void waitForServerQuit() {
 		try {
 
+			(mServer = new ServerTcp()).start(); 
 			udpServerHandler = new UdpServerHandler();
 			udpServerHandler.start();
 
