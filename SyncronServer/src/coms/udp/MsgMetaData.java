@@ -62,6 +62,7 @@ public class MsgMetaData implements ComConstants {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void initMetaData() {
+		if (jMap.size() > 0) {
 		type = extractMetaData(fMESSAGE_TYPE);
 		targetId = extractMetaData(fTARGET_ID);
 		senderId = extractMetaData(fSENDER_ID);
@@ -69,8 +70,10 @@ public class MsgMetaData implements ComConstants {
 		messageId = extractMetaData(fMESSAGE_ID);
 		dataId = extractMetaData(fDATA_ID);
 		adminId = extractMetaData(fDATA_ID);
+		pin = extractMetaData(fPIN);
+		value = extractMetaData(fVALUE);
 	}
-
+	}
 	/**
 	 * @param ftype
 	 * @return
@@ -89,8 +92,9 @@ public class MsgMetaData implements ComConstants {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void parseJsonToMap() {
-		MsgParser.parseMsg(this);
-		initMetaData();
+		if (MsgParser.parseMsg(this) != null) {
+			initMetaData();			
+		}
 	}
 
 	/**

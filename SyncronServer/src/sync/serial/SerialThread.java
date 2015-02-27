@@ -7,21 +7,21 @@ import jssc.SerialPortException;
 import sync.sock.client.SocketClientThread;
 
 public class SerialThread extends Thread {
-	public static String[]	data		= null;
-	public static int[]		dataInt		= null;
-	public static boolean	isReady		= false;
-	public static boolean	gotData		= false;
-	public static boolean	isListening	= false;
-	static SerialPort		serialPort	= new SerialPort("COM4");
-	public static int		i			= 0;
-	public static int		avail		= 0;
-	public static volatile int[]				mAnalogVals				= new int[12];
+	public static String[]		data			= null;
+	public static int[]			dataInt		= null;
+	public static boolean		isReady		= false;
+	public static boolean		gotData		= false;
+	public static boolean		isListening	= false;
+	static SerialPort			serialPort	= new SerialPort("COM4");
+	public static int			i			= 0;
+	public static int			avail		= 0;
+	public static volatile int[]	mAnalogVals	= new int[12];
 	// Analog input values
-	public int[]			analogVals	= null;
-	public static String			mAnalogString			= null;
+	public int[]				analogVals	= null;
+	public static String		mAnalogString	= null;
 	// Digital inputs/outputs
-	public static boolean[]	digiInput	= new boolean[10];
-	public static boolean[]	digiOutput	= new boolean[10];
+	public static boolean[]		digiInput		= new boolean[10];
+	public static boolean[]		digiOutput	= new boolean[10];
 
 	public static void setIO() {
 
@@ -114,11 +114,12 @@ public class SerialThread extends Thread {
 
 					// Send data to socket thread
 					setAnalogString(temp);
-					mAnalogVals =  dataInt;
-//					SocketClientThread.setAnalogVals(dataInt);
+					mAnalogVals = dataInt;
+					// SocketClientThread.setAnalogVals(dataInt);
 
 					// System.out.println("sending data int to socket thread");
-					// System.out.println("Serial input processing - time: " +
+					// System.out.println("Serial input processing - time: "
+					// +
 					// Integer.toString(((int)(System.currentTimeMillis() -
 					// t))));
 					incAvail();
@@ -133,7 +134,6 @@ public class SerialThread extends Thread {
 			}
 			setIsListening(false);
 		}
-
 
 	}
 
@@ -167,20 +167,20 @@ public class SerialThread extends Thread {
 		incAvail();
 		while (serialPort.isOpened()) {
 
-
 			// if (!isListening) {
 			if (isAvail()) {
 				// System.out.println("sending 'a' over serial");
 				try {
 					isListening = true;
 					decAvail();
-					//String cmdString = SocketClientThread.getUdpInputBufferString(); // toString(SocketClientThread.getDigitalOutput());
+					// String cmdString =
+					// SocketClientThread.getUdpInputBufferString(); //
+					// toString(SocketClientThread.getDigitalOutput());
 					// o: write to outputs, a: get analog values
 					// &: command terminator, >: end of output states
-					//if (cmdString == null) cmdString = "1000000000";
+					// if (cmdString == null) cmdString = "1000000000";
 
-
-					//serialPort.writeString("o&" + cmdString + ">");
+					// serialPort.writeString("o&" + cmdString + ">");
 					serialPort.writeString("a&");
 				} catch (SerialPortException e1) {
 					// TODO
@@ -188,7 +188,8 @@ public class SerialThread extends Thread {
 				}
 				/*
 				 * while (!isReady) { try { Thread.sleep(10); } catch
-				 * (InterruptedException e) { // TODO e.printStackTrace(); } };
+				 * (InterruptedException e) { // TODO e.printStackTrace(); }
+				 * };
 				 */
 				/*
 				 * if (SocketClientThread.isDataReady()) { try {
@@ -210,8 +211,8 @@ public class SerialThread extends Thread {
 			}
 			/*
 			 * synchronized (Thread("eventThread")) { try { this.wait();
-			 * isListening = false; } catch (InterruptedException e) { // TODO
-			 * e.printStackTrace(); } }
+			 * isListening = false; } catch (InterruptedException e) { //
+			 * TODO e.printStackTrace(); } }
 			 */
 		}
 
@@ -231,28 +232,32 @@ public class SerialThread extends Thread {
 	 * @return object analogVals of type int[]
 	 */
 	public static synchronized int[] getAnalogVals() {
-		return  mAnalogVals;
+		return mAnalogVals;
 	}
 
 	/**
-	 * @param analogVals the analogVals to set
+	 * @param analogVals
+	 *             the analogVals to set
 	 */
 	public static synchronized void setAnalogVals(int[] analogVals) {
-		 mAnalogVals = analogVals;
+		mAnalogVals = analogVals;
 	}
+
 	public static synchronized String getAnalogString() {
 		return mAnalogString;
 	}
 
 	/**
-	 * @param analogString the analogString to set
+	 * @param analogString
+	 *             the analogString to set
 	 */
 	public static synchronized void setAnalogString(String analogString) {
 		mAnalogString = analogString;
 	}
 
 	// // return commanded output values (which were received from the server)
-	// synchronized public static void setCommandedOutput(boolean[] digiInput) {
+	// synchronized public static void setCommandedOutput(boolean[] digiInput)
+	// {
 	// SerialEventTest.digiInput = digiInput;
 	//
 	// }
@@ -265,7 +270,7 @@ public class SerialThread extends Thread {
 
 	/**
 	 * @param digiInput
-	 *            the digiInput to set
+	 *             the digiInput to set
 	 */
 	public static synchronized void setDigiInput(boolean[] digiInput) {
 		SerialThread.digiInput = digiInput;
@@ -280,7 +285,7 @@ public class SerialThread extends Thread {
 
 	/**
 	 * @param digiOutput
-	 *            the digiOutput to set
+	 *             the digiOutput to set
 	 */
 	public static synchronized void setDigiOutput(boolean[] digiOutput) {
 		SerialThread.digiOutput = digiOutput;

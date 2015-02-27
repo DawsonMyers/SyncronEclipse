@@ -18,7 +18,7 @@ import sync.controller.ServerController;
  * @author Dawson
  *
  */
-public class ArdulinkSerial implements SerialConstants{
+public class ArdulinkSerial extends Thread implements SerialConstants{
 public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.getName());
 	ServerController	controller	= ServerController.getInstance();
 	
@@ -41,13 +41,13 @@ public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.ge
 	 * 
 	 */
 public static ArdulinkSerial aSerial = new ArdulinkSerial();
-
-public static UdpHandler udpHandler = null;
-public static UdpServerHandler udpServerHandler = null;
-	public static void main(String[] args) {
-
-		udpServerHandler = new UdpServerHandler();
-		udpServerHandler.start();
+//
+//public static UdpHandler udpHandler = null;
+//public static UdpServerHandler udpServerHandler = null;
+	//public static void main(String[] args) {
+public void run() {
+//		udpServerHandler = new UdpServerHandler();
+//		udpServerHandler.start();
 		//udpHandler = new UdpHandler();
 		//udpHandler.start();
 		  link = Link.getDefaultInstance();

@@ -72,7 +72,7 @@ public class MsgParser {
 				return null;
 			}
 		} else {
-
+log.warn("Not a JSON string");
 			return null;
 		}
 	}

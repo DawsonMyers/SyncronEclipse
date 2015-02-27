@@ -28,15 +28,21 @@ import coms.tcp.server.ServerTcp;
  * @author Dawson
  *
  */
-public class NodeClientTcp implements SocketObserver, Runnable, ComConstants {
+public class NodeClientTcp extends Thread implements SocketObserver,  ComConstants {
 	public final static Logger	log			= LoggerFactory.getLogger(NodeClientTcp.class.getName());
-	public final EventMachine	mEventMachine;
+	public EventMachine	mEventMachine;
 	public static boolean		isConnected	= false;
 	public static NIOSocket		socket		= null;
 	public static NodeClientTcp mClient = null;
 	public ClientHandlerTcp handler = null;
 	// public NodeClientTcp() {
 	// }
+	public NodeClientTcp() {}
+	public void init(EventMachine machine) {
+		mEventMachine = machine;
+		mClient = this;
+		handler = new ClientHandlerTcp();
+	}
 	public NodeClientTcp(EventMachine machine) {
 		mEventMachine = machine;
 		mClient = this;
@@ -47,7 +53,9 @@ public class NodeClientTcp implements SocketObserver, Runnable, ComConstants {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	@Override
+	public void run() {
+	//public static void main(String[] args) {
 		int port = 6500;// Integer.parseInt(args[0]);
 		String host = IP_LOCAL; // IP_SERVER;
 		InetSocketAddress address = new InetSocketAddress(host, port);
@@ -64,8 +72,7 @@ public class NodeClientTcp implements SocketObserver, Runnable, ComConstants {
 		}
 	}
 
-	@Override
-	public void run() {}
+	
 
 	@Override
 	public void connectionOpened(NIOSocket nioSocket) {

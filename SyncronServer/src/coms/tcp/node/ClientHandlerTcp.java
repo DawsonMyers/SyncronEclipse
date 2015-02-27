@@ -11,6 +11,7 @@ import java.util.logging.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sync.serial.ArdulinkSerial;
 import coms.MessageBuffer;
  
 import coms.tcp.MessageTcp;
@@ -65,6 +66,7 @@ public class ClientHandlerTcp extends AbstractHandler {
 	// ///////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public void handleDigitalMessage(ClientMsg msg) {
+		ArdulinkSerial.setPin(msg.getPin(), msg.getIntValue());
 		System.out.println("Digital message processed");
 	}
 
