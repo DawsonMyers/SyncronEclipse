@@ -33,12 +33,16 @@ public class NodeClientTcp implements SocketObserver, Runnable, ComConstants {
 	public final EventMachine	mEventMachine;
 	public static boolean		isConnected	= false;
 	public static NIOSocket		socket		= null;
-
+	public static NodeClientTcp mClient = null;
+	public ClientHandlerTcp handler = null;
 	// public NodeClientTcp() {
 	// }
 	public NodeClientTcp(EventMachine machine) {
 		mEventMachine = machine;
+		mClient = this;
+		handler = new ClientHandlerTcp();
 	}
+	public  static NodeClientTcp getInstance() {return mClient;}
 
 	/**
 	 * @param args
@@ -86,10 +90,11 @@ public class NodeClientTcp implements SocketObserver, Runnable, ComConstants {
 			sendMessage(sysID_NODE);
 			log.info("Sending registration ID to server");
 		}
-		System.out.println("Received message: \nl" + message);
+		System.out.println("Received message: \n->" + message);
 		//System.out.println(testMsg);
-		sendMessage("{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}");
+		//sendMessage("{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}");
 
+		handler.addToQue(message);
 	}
 
 	@Override

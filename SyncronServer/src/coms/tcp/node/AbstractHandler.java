@@ -1,11 +1,12 @@
 /**
  * 
  */
-package coms.tcp;
+package coms.tcp.node;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import msg.MsgTimer;
 
@@ -24,28 +25,28 @@ import coms.udp.MsgMetaData;
  * @author Dawson
  *
  */
-public abstract class AbstractTcpHandler extends Thread implements ComConstants {
+public abstract class AbstractHandler   extends Thread implements ComConstants {
 
-	public final static Logger				log					= LoggerFactory.getLogger(AbstractTcpHandler.class.getName());
+	public final static Logger				log					= LoggerFactory.getLogger(AbstractHandler.class.getName());
 
 	public static int						counter				= 0;
 	public static MsgTimer					timer				= new MsgTimer();
-	public static volatile Map<String, User>	connectedClients		= new HashMap<>();										// new
-																												// HashMap<>();
-	public static volatile Map<String, User>	connectedNodeClients	= new HashMap<>();
-	public static volatile Map<String, User>	connectedAndroidClients	= new HashMap<>();
+	public static volatile Map<String, Object>	connectedClients		= new HashMap<>();										// new
+	LinkedBlockingQueue<ClientMsg>	inQue		= new LinkedBlockingQueue<>();
+	LinkedBlockingQueue<ClientMsg>	outQue		= new LinkedBlockingQueue<>();																				// HashMap<>();
+ 
 
 	public Map<String, Object>				implementedMap			= null;
 	// public static volatile MessageBuffer<Msg> incomingMsgBufferPACKET = new
 	// MessageBuffer<Msg>();
-	// public static volatile MessageBuffer<MessageTcp> incomingMsgBufferPACKET
-	// = new MessageBuffer<MessageTcp>();
-	// public static volatile MessageBuffer<MessageTcp> outgoingMsgBuffer = new
-	// MessageBuffer<MessageTcp>();
+	// public static volatile MessageBuffer<ClientMsg> incomingMsgBufferPACKET
+	// = new MessageBuffer<ClientMsg>();
+	// public static volatile MessageBuffer<ClientMsg> outgoingMsgBuffer = new
+	// MessageBuffer<ClientMsg>();
 
 	// public static UdpMessenger udpMessenger;
 	public static Thread					udpMessengerThrd;
-	public static AbstractTcpHandler			handler;
+	public static AbstractHandler			handler;
 
 	// Started in ArdulinkSerial
 
@@ -54,37 +55,33 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 	//
 	// }
 
-	public abstract MessageBuffer<MessageTcp> getIncomingBuffer();
+	public abstract MessageBuffer<ClientMsg> getIncomingBuffer();
 
-	public abstract MessageBuffer<MessageTcp> getOutgoingBuffer();
+	public abstract MessageBuffer<ClientMsg> getOutgoingBuffer();
 
 	public abstract void startMsgHandlers();
 
-	public abstract void handleIncomingMessage(MessageTcp msg);
+	public abstract void handleIncomingMessage(ClientMsg msg);
 
-	public abstract void handleOutgoingMessage(MessageTcp msg);
+	public abstract void handleOutgoingMessage(ClientMsg msg);
 
-	public abstract void sendMessage(MessageTcp msg);
+	public abstract void sendMessage(ClientMsg msg);
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	public AbstractTcpHandler() {
+	public AbstractHandler() {
 		log.info("Logger started");
 
 	}
 
 	public void run() {
-		// udpMessenger = new UdpMessenger(this);
-		//
-		// udpMessengerThrd = new Thread(udpMessenger);
-		// udpMessengerThrd.start();
-
+	 
 		log.info("Starting Handlers");
 		// startMsgHandlers();
 	}
 
-	public void processMessage(MessageTcp msg) {
+	public void processMessage(ClientMsg msg) {
 		log.debug("Processing received message");
 
 		new Thread(() -> {
@@ -129,21 +126,21 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 	 * 
 	 * @param msg
 	 */
-	public abstract void handleDigitalMessage(MessageTcp msg);
+	public abstract void handleDigitalMessage(ClientMsg msg);
 
-	public abstract void handleAnalogMessage(MessageTcp msg);
+	public abstract void handleAnalogMessage(ClientMsg msg);
 
-	public abstract void handleAdminMessage(MessageTcp msg);
+	public abstract void handleAdminMessage(ClientMsg msg);
 
-	public abstract void handleUpdateMessage(MessageTcp msg);
+	public abstract void handleUpdateMessage(ClientMsg msg);
 
-	public abstract void handleRegisterMessage(MessageTcp msg);
+	public abstract void handleRegisterMessage(ClientMsg msg);
 
-	public abstract void handleStatusMessage(MessageTcp msg);
+	public abstract void handleStatusMessage(ClientMsg msg);
 
-	public abstract void handleLoginMessage(MessageTcp msg);
+	public abstract void handleLoginMessage(ClientMsg msg);
 
-	public abstract void handleUserMessage(MessageTcp msg);
+	public abstract void handleUserMessage(ClientMsg msg);
 
 	public abstract void implementedMapConfig();
 

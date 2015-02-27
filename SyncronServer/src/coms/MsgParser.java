@@ -17,6 +17,7 @@ import com.codesnippets4all.json.parsers.JSONParser;
 import com.codesnippets4all.json.parsers.JsonParserFactory;
 
 import coms.tcp.MessageTcp;
+import coms.udp.MsgMetaData;
 
 /**
  * @author Dawson
@@ -53,7 +54,7 @@ public class MsgParser {
 	 *             jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
 	 *             
 	 */
-	public static Map<String, Object> parseMsg(MessageTcp messageTcp) {
+	public static Map<String, Object> parseMsg(MsgMetaData messageTcp) {
 		String jsonString = messageTcp.getJsonMsg();
 		if (jsonString.startsWith(jsonStartToken) && jsonString.endsWith(jsonEndToken)) {
 

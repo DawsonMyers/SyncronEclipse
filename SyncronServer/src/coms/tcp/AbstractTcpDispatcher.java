@@ -10,17 +10,20 @@ import org.slf4j.LoggerFactory;
 import sync.system.SyncUtils;
 import coms.MessageBuffer;
 import coms.tcp.MessageTcp;
+import coms.udp.MsgMetaData;
 import coms.UdpMessenger;
 
 /**
  * @author Dawson
  *
  */
-public abstract class AbstractTcpDispatcher implements Runnable {
+public abstract class AbstractTcpDispatcher extends Thread implements Runnable {
 
-	public final static Logger				log			= LoggerFactory.getLogger(AbstractTcpDispatcher.class.getName());
-	public volatile MessageBuffer<MessageTcp>	msgBuffer		= new MessageBuffer<MessageTcp>();
-	public AbstractTcpHandler				tcpHandler	= null;
+	public final static Logger						log			= LoggerFactory.getLogger(AbstractTcpDispatcher.class.getName());
+	public volatile MessageBuffer<? extends MsgMetaData>	msgBuffer		= new MessageBuffer<>();
+	// public volatile MessageBuffer<MessageTcp> msgBuffer = new
+	// MessageBuffer<MessageTcp>();
+	public AbstractTcpHandler						tcpHandler	= null;
 
 	/**
 	 * 
@@ -53,9 +56,9 @@ public abstract class AbstractTcpDispatcher implements Runnable {
 				}
 			} else {
 				log.info("processing a msg");
-				
-				 handleMessage() ;
-				//new Thread(() -> handleMessage()).start();
+
+				handleMessage();
+				// new Thread(() -> handleMessage()).start();
 			}
 		}
 	}

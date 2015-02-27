@@ -72,17 +72,17 @@ public class MsgPacket extends MsgMetaData implements ComConstants {
 
 	// Processing
 	// ///////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * @param jsonMsg
-	 */
-	private void prepareJsonFromMap(Map<String, Object> jMap) {
-
-		setjMap(jMap);
-		JSONObject obj = new JSONObject();
-		String jMsg = obj.toJSONString(jMap);
-		setJsonMsg(jMsg);
-	}
+//
+//	/**
+//	 * @param jsonMsg
+//	 */
+//	protected void prepareJsonFromMap(Map<String, Object> jMap) {
+//
+//		setjMap(jMap);
+//		JSONObject obj = new JSONObject();
+//		String jMsg = obj.toJSONString(jMap);
+//		setJsonMsg(jMsg);
+//	}
 
 	// Message Getters/Setters
 	// ///////////////////////////////////////////////////////////////////////////////////

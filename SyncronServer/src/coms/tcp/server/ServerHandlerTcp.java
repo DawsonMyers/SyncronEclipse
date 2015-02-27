@@ -42,11 +42,11 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 
 	@Override
 	public synchronized void startMsgHandlers() {
-		incomingHandler = new ServerReceiverTcp(this);
-		new Thread(incomingHandler, "Incoming Handler").start();
+		(incomingHandler = new ServerReceiverTcp(this)).start();;
+		//new Thread(incomingHandler, "Incoming Handler").start();
 
-		outgoingHandler = new ServerSenderTcp(this);
-		new Thread(outgoingHandler, "Outgoing Handler").start();
+		(outgoingHandler = new ServerSenderTcp(this)).start();
+		//new Thread(outgoingHandler, "Outgoing Handler").start();
 	}
 
 	@Override
@@ -55,14 +55,16 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 	@Override
 	public void handleOutgoingMessage(MessageTcp msg) {}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public MessageBuffer<MessageTcp> getIncomingBuffer() {
-		return incomingHandler.msgBuffer;
+		return   (MessageBuffer<MessageTcp>) incomingHandler.msgBuffer;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public MessageBuffer<MessageTcp> getOutgoingBuffer() {
-		return outgoingHandler.msgBuffer;
+		return  (MessageBuffer<MessageTcp>) outgoingHandler.msgBuffer;
 	}
 
 	// Message received callbacks
@@ -82,6 +84,7 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 				log.info("Sending digital msg to " + msg.getTargetUser().getName());
 				System.out.println(msg.getClientId());
 				sendMessage(msg);
+				return;
 			}
 		}
 

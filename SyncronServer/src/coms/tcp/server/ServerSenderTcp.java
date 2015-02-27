@@ -38,7 +38,7 @@ public class ServerSenderTcp extends AbstractTcpDispatcher implements ITcp {
 	public void handleMessage() {
 
 		if (msgBuffer.queSize() > 0) {
-			MessageTcp msg = msgBuffer.nextFromQue();
+			MessageTcp msg = (MessageTcp) msgBuffer.nextFromQue();
 			new Thread(() -> sendMessage(msg), "TcpSender").start();
 
 		}

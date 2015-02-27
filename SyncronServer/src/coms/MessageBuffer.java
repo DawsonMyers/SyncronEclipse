@@ -5,6 +5,8 @@ package coms;
 
 import java.util.LinkedList;
 
+import coms.udp.MsgMetaData;
+
 import sync.system.SyncUtils;
 
 /**
@@ -27,7 +29,7 @@ public class MessageBuffer<Message> {
 	public synchronized void addToQue(Message msg) {
 		mLinkedList.addLast(msg);
 		System.out.println("  Msg added to List");
-		if (queSize() == 1) {
+		if (queSize() >= 1) {
 			synchronized (this) {
 				this.notifyAll();
 			}

@@ -8,11 +8,15 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import coms.ComConstants;
+import coms.MsgParser;
 import coms.tcp.AbstractTcpHandler;
+import coms.tcp.node.AbstractHandler;
+import coms.tcp.node.NodeClientTcp;
 import coms.tcp.server.ServerHandlerTcp;
 
 /**
@@ -24,7 +28,8 @@ public class MsgMetaData implements ComConstants {
 
 	public String				mJsonMsg		= "";
 	public Map<String, Object>	jMap			= new HashMap<>();
-	public AbstractTcpHandler	tcpHandler	= ServerHandlerTcp.getInstance();
+	public AbstractTcpHandler	tcpHandler	= null;											// ServerHandlerTcp.getInstance();
+	public AbstractHandler		clientHandler	= null;											// ServerHandlerTcp.getInstance();
 
 	public String				protocol		= "";
 	public String				type			= "";
@@ -39,12 +44,92 @@ public class MsgMetaData implements ComConstants {
 
 	public String				networkId		= "";
 	public String				clientId		= "";
+	// Node
+	// ///////////////////////////////////////////////////////////////////////////////////
 
+	public NodeClientTcp		mClient		= null;
+
+	// Constructors
+	// ///////////////////////////////////////////////////////////////////////////////////
 	public MsgMetaData() {}
 
 	public MsgMetaData(Map<String, Object> jMap) {
 		this.jMap = jMap;
 		initMetaData();
+	}
+
+	//
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	public void initMetaData() {
+		type = extractMetaData(fMESSAGE_TYPE);
+		targetId = extractMetaData(fTARGET_ID);
+		senderId = extractMetaData(fSENDER_ID);
+		senderType = extractMetaData(fSENDER_TYPE);
+		messageId = extractMetaData(fMESSAGE_ID);
+		dataId = extractMetaData(fDATA_ID);
+		adminId = extractMetaData(fDATA_ID);
+	}
+
+	/**
+	 * @param ftype
+	 * @return
+	 */
+	public String extractMetaData(String field) {
+		if (jMap.containsKey(field)) {
+			return (String) jMap.get(field);
+		} else {
+			// log.error("Message field: " + field +
+			// " does not exist in received message");
+			return "ERROR";
+		}
+	}
+
+	//
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	public void parseJsonToMap() {
+		MsgParser.parseMsg(this);
+		initMetaData();
+	}
+
+	/**
+	 * @param jsonMsg
+	 */
+	public void prepareJsonFromMap(Map<String, Object> jMap) {
+
+		setjMap(jMap);
+		JSONObject obj = new JSONObject();
+		String jMsg = obj.toJSONString(jMap);
+		setJsonMsg(jMsg);
+	}
+
+	// Message field setters/getters
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	// Taken from MessageTCP
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	// Processing
+	// ///////////////////////////////////////////////////////////////////////////////////
+	/**
+	 *
+	 */
+	public void extractMetaData() {
+		jMap = MsgParser.parseMsg(this);
+		if (jMap != null) initMetaData();
+	}
+
+	// [MessageTcp] getters/setters
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param jsonMsg
+	 *             the jasonMsg to set
+	 */
+	public void setJsonMsg(String jsonMsg) {
+		this.mJsonMsg = jsonMsg;
+		// setPacketData();
 	}
 
 	/**
@@ -63,39 +148,43 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * 
+	 * @return object jasonMsg of type String
 	 */
-	public void initMetaData() {
-		type = extractMetaData(fMESSAGE_TYPE);
-		targetId = extractMetaData(fTARGET_ID);
-		senderId = extractMetaData(fSENDER_ID);
-		senderType = extractMetaData(fSENDER_TYPE);
-		messageId = extractMetaData(fMESSAGE_ID);
-		dataId = extractMetaData(fDATA_ID);
-		adminId = extractMetaData(fDATA_ID);
+	public String getJsonMsg() {
+		return mJsonMsg;
 	}
 
-	/**
-	 * @param ftype
-	 * @return
-	 */
-	private String extractMetaData(String field) {
-		if (jMap.containsKey(field)) {
-			return (String) jMap.get(field);
-		} else {
-			//log.error("Message field: " + field + " does not exist in received message");
-			return "ERROR";
-		}
-	}
-//
-// ///////////////////////////////////////////////////////////////////////////////////
+	public int getPin() {
+		return Integer.parseInt(pin);
 
-	
-	
-	
-	
-	
-	// Message field setters/getters
+	}
+
+	public int getIntValue() {
+		return Integer.parseInt(value);
+
+	}
+
+	public String getStringValue() {
+		return value;
+
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
+
+	}
+
+	public void setValue(String val) {
+		value = val;
+
+	}
+
+	public void setCmd(String cmd) {
+		this.type = cmd;
+
+	}
+
+	// Original
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -188,7 +277,8 @@ public class MsgMetaData implements ComConstants {
 	}
 
 	/**
-	 * @param tcpHandler the tcpHandler to set
+	 * @param tcpHandler
+	 *             the tcpHandler to set
 	 */
 	public void setTcpHandler(AbstractTcpHandler tcpHandler) {
 		this.tcpHandler = tcpHandler;
@@ -262,9 +352,6 @@ public class MsgMetaData implements ComConstants {
 		this.clientId = clientId;
 	}
 
-	
-	
-	
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);

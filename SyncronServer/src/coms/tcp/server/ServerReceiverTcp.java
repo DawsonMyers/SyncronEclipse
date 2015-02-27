@@ -40,7 +40,7 @@ public class ServerReceiverTcp extends AbstractTcpDispatcher implements ITcp {
 	@Override
 	public void handleMessage() {
 
-		MessageTcp msg = msgBuffer.nextFromQue();
+		MessageTcp msg = (MessageTcp) msgBuffer.nextFromQue();
 	 
 		msg.setHandler(tcpHandler);
 		 
