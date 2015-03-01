@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="proj">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/proj/MySqlHelper_Feb24.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/proj/ref_proj.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

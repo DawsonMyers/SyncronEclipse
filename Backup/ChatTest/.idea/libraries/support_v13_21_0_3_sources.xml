@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="support-v13-21.0.3-sources">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/support-v13-21.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

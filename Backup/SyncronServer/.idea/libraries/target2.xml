@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="target">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/target/SyncronFeb27.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/udp1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/server.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/Syncron_feb27.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/echo1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/server_test.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
