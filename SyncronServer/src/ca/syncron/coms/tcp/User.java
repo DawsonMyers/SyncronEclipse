@@ -41,14 +41,14 @@ public class User implements SocketObserver, ComConstants {
 
 	public void connectionOpened(NIOSocket nioSocket) {
 		// We start by scheduling a disconnect event for the login.
-		scheduleInactivityEvent();
-		// m_disconnectEvent = m_server.getEventMachine().executeLater(new
-		// Runnable() {
-		// public void run() {
-		// getSocket().write("<Disconnecting due to inactivity>".getBytes());
-		// getSocket().closeAfterWrite();
-		// }
-		// }, LOGIN_TIMEOUT);
+		//scheduleInactivityEvent();
+		 m_disconnectEvent = m_server.getEventMachine().executeLater(new
+		 Runnable() {
+		 public void run() {
+		 getSocket().write("<Disconnecting due to inactivity>".getBytes());
+		 getSocket().closeAfterWrite();
+		 }
+		 }, LOGIN_TIMEOUT);
 
 		// Send the request to log in.
 		nioSocket.write(sysREGISTER_REQUEST.getBytes());
@@ -70,7 +70,7 @@ public class User implements SocketObserver, ComConstants {
 
 	private void scheduleInactivityEvent() {
 		// Cancel the last disconnect event, schedule another.
-		if (!(m_name == null) & !m_name.contains("node")) {
+		if (m_name != null && !m_name.contains("node")) {
 			if (m_disconnectEvent != null) m_disconnectEvent.cancel();
 			m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable() {
 				public void run() {
@@ -78,7 +78,11 @@ public class User implements SocketObserver, ComConstants {
 					getSocket().closeAfterWrite();
 				}
 			}, INACTIVITY_TIMEOUT);
-		}
+		} 
+		
+
+			if (m_disconnectEvent != null  && m_name != null && m_name.length() > 0 & m_name.contains("node")) m_disconnectEvent.cancel();
+		
 	}
 
 	// Received
@@ -104,12 +108,13 @@ public class User implements SocketObserver, ComConstants {
 			return;
 		}
 		System.out.println("msg received from -> " + m_name + "\n  " + message);
-		if (message.contains("chat")) {
+		
+		if (isJsonMsg(message) && message.contains(CHAT_token)) {
 			m_server.broadcast(this, message);
-			System.out.println("Chat message received from: " + getName());
+			System.out.println("Chat message received from: " + getName() + "\n" + extract(message, VALUEt));
 			return;
 		}
-		if (message.startsWith("{message_type:") & message.endsWith("}")) {
+		if (isJsonMsg(message)) {
 			MessageTcp msg = new MessageTcp(this, message);
 			m_server.incomingBuffer.addToQue(msg);
 		}else {
@@ -119,8 +124,25 @@ public class User implements SocketObserver, ComConstants {
 		// m_server.broadcast(this, m_name + ": " + message);
 	}
 
+	public String extract(String msg, String token) {
+		String value = "";
+		if (msg != null & token != null) {
+			int i1 = msg.indexOf(token);
+			int i2 = msg.indexOf(QUOTEt, i1 + token.length());
+			  value = msg.substring(i1 + token.length(), i2);
+		}
+		return value;
+		
+	}
+	
 	// ///////////////////////////////////////////////////////////////////////////////////
 
+	public boolean isJsonMsg(String message) {
+		if (message.startsWith("{message_type:") & message.endsWith("}")) {
+			return true;
+		}
+		return false;
+	}
 	public void packetSent(NIOSocket socket, Object tag) {
 		System.out.println("EVENT	packetSent");
 	}

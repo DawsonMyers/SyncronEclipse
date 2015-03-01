@@ -28,7 +28,7 @@ public class NodeClientTcp extends Thread implements SocketObserver,  ComConstan
 	public static NIOSocket		socket		= null;
 	public static NodeClientTcp mClient = null;
 	public ClientHandlerTcp handler = null;
-	public String host =  IP_SERVER;//IP_LOCAL;
+	public String host =  IP_LOCAL;//IP_LOCAL;
 	// public NodeClientTcp() {
 	// }
 	public NodeClientTcp() {}

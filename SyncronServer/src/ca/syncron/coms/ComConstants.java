@@ -56,11 +56,20 @@ public interface ComConstants {
 	String					sysREGISTER_REQUEST		= "<register_id>";
 	String					sysUSER_DISCON			= "<user_disconnected>";
 	String					sysCONNECTED_USERS		= "<connected_users>";
-	String					sysID_NODE		= "node";
-	String					sysID_SERVER		= "server";
-	String					sysID_ANDROID		= "android";
-	String					testMsg		= "{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}";
-	
+	String					sysID_NODE			= "node";
+	String					sysID_SERVER			= "server";
+	String					sysID_ANDROID			= "android";
+	String					testMsg				= "{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}";
+
+	String					msgDIGITAL_TEMP		= "{message_type:\"digital\",sender_type:\"android\",value:\"<value>\",pin:\"<pin>\",target_id:\"node\"}";
+	public static final String	PIN					= "<pin>";
+	public static final String	VALUE				= "<value>";
+	public String				CHAT_token			= "message_type:\"chat\"";
+	public String				VALUEt				= "value:\"";
+	public String				QUOTEt				= "\"";
+
+	String					msgCHAT				= "{message_type:\"chat\",sender_type:\"android\",value:\"<value>\",target_id:\"android\"}";
+
 	// Tcp Message
 	// ///////////////////////////////////////////////////////////////////////////////////
 
