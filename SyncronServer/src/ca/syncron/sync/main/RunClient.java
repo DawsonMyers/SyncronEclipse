@@ -22,12 +22,26 @@ public class RunClient {
 	static Thread					thread;
 	public static String			buff;
 	public static boolean			isReady		= false;
-	static SerialPort				serialPort	= new SerialPort("COM4");
+	static SerialPort				serialPort;//	= new SerialPort("COM4");
 	public static NodeClientTcp		client		= null;
 	public static ArdulinkSerial		serial		= null;
-
+	public static String			serialPortString = null;
+	public static String			inIP = null;
+	
+//	static {
+//		    try {
+//		    	System.load("/home/odroid/Arduino/lib/librxtxSerial.so");
+//		    } catch (UnsatisfiedLinkError e) {
+//		      System.err.println("Native code library failed to load.\n" + e);
+//		      System.exit(1);
+//		    }
+//		  }
 	public static void main(String[] args) {
 
+//		if (args  != null) {
+////			serialPortString = args[0];
+//			inIP = args[0];
+//		}
 		StartClientServer();
 
 	}
@@ -125,4 +139,10 @@ public class RunClient {
 			}
 		}
 	}
+
+	/**
+	 * 
+	 */
+	public static String getSerrialPort() {
+		return serialPortString;}
 }

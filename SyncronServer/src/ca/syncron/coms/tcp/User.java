@@ -144,7 +144,7 @@ public class User implements SocketObserver, ComConstants {
 		return false;
 	}
 	public void packetSent(NIOSocket socket, Object tag) {
-		System.out.println("EVENT	packetSent");
+//		System.out.println("EVENT	packetSent");
 	}
 
 	public void sendBroadcast(byte[] bytesToSend) {

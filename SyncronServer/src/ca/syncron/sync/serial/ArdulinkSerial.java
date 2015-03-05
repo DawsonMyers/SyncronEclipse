@@ -11,6 +11,7 @@ import org.zu.ardulink.event.ConnectionListener;
 import org.zu.ardulink.event.DisconnectionEvent;
 
 import ca.syncron.sync.controller.ServerController;
+import ca.syncron.sync.main.RunClient;
  
 
 /**
@@ -22,8 +23,10 @@ public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.ge
 	ServerController	controller	= ServerController.getInstance();
 	
 	public static int[]		serialAnalogVals	= new int[ANALOG_PINS];
-
-	public static String	PORT				= "COM8";
+ @Syncron
+ //@TODO     
+	public static String	PORT				= 	"/dev/ttyS10"; //			"COM8";
+ public static String	tempPort				= 	null;
 	public static int		pin					= 3;
 	public static int		pinVar				= 2;
 	public static int		delay				= 100;
@@ -45,6 +48,10 @@ public static ArdulinkSerial aSerial = new ArdulinkSerial();
 //public static UdpServerHandler udpServerHandler = null;
 	//public static void main(String[] args) {
 public void run() {
+	tempPort = RunClient.getSerrialPort();
+	if (tempPort  != null) {
+		PORT = tempPort;
+	}
 //		udpServerHandler = new UdpServerHandler();
 //		udpServerHandler.start();
 		//udpHandler = new UdpHandler();
