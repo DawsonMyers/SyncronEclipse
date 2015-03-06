@@ -63,8 +63,8 @@ public class ClientHandlerTcp extends AbstractHandler {
 	// ///////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public void handleDigitalMessage(ClientMsg msg) {
-		ArdulinkSerial.setPin(msg.getPin(), msg.getIntValue());
 		System.out.println("Digital message processed");
+		ArdulinkSerial.setPin(msg.getPin(), msg.getIntValue());
 	}
 
 	@Override
@@ -89,6 +89,10 @@ public class ClientHandlerTcp extends AbstractHandler {
 	public void handleUserMessage(ClientMsg msg) {}
 
 	@Override
+	public void handleChatMessage(ClientMsg msg) {
+		System.out.println("Chat msg resceived");
+	}
+	 
 	public void implementedMapConfig() {}
 	public void addToQue(ClientMsg msg) {
 		receiver.msgBuffer.addToQue(msg);
@@ -97,6 +101,10 @@ public class ClientHandlerTcp extends AbstractHandler {
 		ClientMsg msg = new ClientMsg(client,strMsg);
 		receiver.msgBuffer.addToQue(msg);
 	}
+
+	@Override
+	public void implementedMapConfig(ClientMsg msg) {}
+
 }
 
 class Receiver extends AbstractDispatcher {

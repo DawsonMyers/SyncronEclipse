@@ -138,4 +138,9 @@ public class ServerHandlerTcp extends AbstractTcpHandler {
 		implementedMap.put(fSENDER_TYPE, vSERVER);
 	}
 
+	@Override
+	public void handleChatMessage(MessageTcp msg) {
+		System.out.println("Handle CHAT");
+	}
+
 }

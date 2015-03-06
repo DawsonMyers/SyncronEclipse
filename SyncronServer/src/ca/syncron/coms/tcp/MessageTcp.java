@@ -110,7 +110,7 @@ public class MessageTcp extends MsgMetaData implements ComConstants {
 	 * @return
 	 */
 	public String getTargetMsg() {
-		return targetMsg;
+		return mJsonMsg;
 	}
 
 	public byte[] getTargetMsgBytes() {

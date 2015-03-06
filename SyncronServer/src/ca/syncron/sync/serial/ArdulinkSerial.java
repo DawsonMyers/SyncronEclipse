@@ -21,11 +21,11 @@ import ca.syncron.sync.main.RunClient;
 public class ArdulinkSerial extends Thread implements SerialConstants{
 public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.getName());
 	ServerController	controller	= ServerController.getInstance();
-	
+	String tag = this.getName();
 	public static int[]		serialAnalogVals	= new int[ANALOG_PINS];
  @Syncron
  //@TODO     
-	public static String	PORT				= 	"/dev/ttyS10"; //			"COM8";
+	public static String	PORT				= PORT_SERIAL_LINUX;//PORT_SERIAL_LINUX;	//"/dev/ttyS10"; //			"COM8";PORT_SERIAL_WINDOWS
  public static String	tempPort				= 	null;
 	public static int		pin					= 3;
 	public static int		pinVar				= 2;
@@ -43,15 +43,13 @@ public final static Logger log = LoggerFactory.getLogger(ArdulinkSerial.class.ge
 	 * 
 	 */
 public static ArdulinkSerial aSerial = new ArdulinkSerial();
-//
-//public static UdpHandler udpHandler = null;
-//public static UdpServerHandler udpServerHandler = null;
+ 
 	//public static void main(String[] args) {
 public void run() {
-	tempPort = RunClient.getSerrialPort();
-	if (tempPort  != null) {
-		PORT = tempPort;
-	}
+//	tempPort = RunClient.getSerrialPort();
+//	if (tempPort  != null) {
+//		PORT = tempPort;
+//	}
 //		udpServerHandler = new UdpServerHandler();
 //		udpServerHandler.start();
 		//udpHandler = new UdpHandler();
@@ -62,17 +60,17 @@ public void run() {
 
 			@Override
 			public void disconnected(DisconnectionEvent e) {
-				System.out.println("Board disconnected");
+				System.out.println("Disconnected from Arduino");
 			}
 
 			@Override
 			public void connected(ConnectionEvent e) {
-				System.out.println("Board connected");
+				System.out.println("Connected to Arduino");
 			}
 		});
 
 		link.connect(PORT);
-		
+		log.debug(tag,"Setting analog pins");
 		for(int i = 0; i < analogPins.length; i++) {
 			analogPins[i] = new AnalogPin();
 			analogPins[i].initPin(link, i, aSerial);
@@ -97,6 +95,7 @@ public void run() {
 	public static void setPin(int pin, int state) {
 		link = Link.getDefaultInstance();
 		link.sendPowerPinSwitch(pin, state);
+		if(!link.isConnected()) System.out.println("ARDUINO IS NOT CONNECTED");
 	}
 
 }

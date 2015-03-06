@@ -109,6 +109,9 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 				case tUSER:
 					handleUserMessage(msg);
 					break;
+				case tCHAT:
+					handleChatMessage(msg);
+					break;
 
 				default:
 					log.error("message could not be identified");
@@ -139,6 +142,7 @@ public abstract class AbstractTcpHandler extends Thread implements ComConstants 
 	public abstract void handleLoginMessage(MessageTcp msg);
 
 	public abstract void handleUserMessage(MessageTcp msg);
+	public abstract void handleChatMessage(MessageTcp msg);
 
 	public abstract void implementedMapConfig();
 

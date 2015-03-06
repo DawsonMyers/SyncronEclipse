@@ -89,6 +89,7 @@ public class NodeClientTcp extends Thread implements SocketObserver,  ComConstan
 		if (message.contains(sysREGISTER_REQUEST)) {
 			sendMessage(sysID_NODE);
 			log.info("Sending registration ID to server");
+			return;
 		}
 		System.out.println("Received message: \n->" + message);
 		//System.out.println(testMsg);

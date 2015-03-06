@@ -106,13 +106,18 @@ public abstract class AbstractHandler   extends Thread implements ComConstants {
 				case tUSER:
 					handleUserMessage(msg);
 					break;
+				case tCHAT:
+					handleChatMessage(msg);
+					break;
 
 				default:
-					log.error("message could not be identified");
+					log.error("message could not be identified. ID = " + msg.getType());
 					break;
 			}
 		}).start();
 	}
+
+	
 
 	/**
 	 * Abstract callback methods that are triggered whenever the corresponding
@@ -136,8 +141,9 @@ public abstract class AbstractHandler   extends Thread implements ComConstants {
 	public abstract void handleLoginMessage(ClientMsg msg);
 
 	public abstract void handleUserMessage(ClientMsg msg);
+	public abstract void handleChatMessage(ClientMsg msg);
 
-	public abstract void implementedMapConfig();
+	public abstract void implementedMapConfig(ClientMsg msg);
 
 	@Override
 	public String toString() {

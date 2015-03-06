@@ -86,6 +86,7 @@ public interface ComConstants {
 	public String				fDATA_ID				= "data_id";
 	public String				fID					= "id";
 	public String				fREQUIRE_ACK			= "require_ack";
+	public String				fCONTENT				= "content";
 
 	// To be added
 	String					fCONFIG				= "config";
@@ -121,5 +122,17 @@ public interface ComConstants {
 	public String				cSHUTDOWN				= "shutdown";
 	public String				cREBOOT				= "reboot";
 	public String				cTEST				= "test";
+
+	// Key-value separator
+	public String				mSEP					= ":\"\",";
+	public String				mNULL				= "";
+	public String				T					= "test";
+	public String				TST					= "test";
+	
+	
+	String					fQUERY				= "query";
+	String					fSTATUS				= "status";
+	String					fVALUES				= "values";
+	String					fMESSAGE				= "message";
 
 }
